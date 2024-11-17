@@ -38,6 +38,8 @@ public abstract class StaticConfig {
     @Getter(AccessLevel.NONE)
     private final HashMap<String, Boolean> routes = new HashMap<>();
 
+    private final HashMap<String, List<String>> relocations = new HashMap<>();
+
     @Getter(AccessLevel.NONE)
     private boolean success = true;
 
@@ -65,6 +67,7 @@ public abstract class StaticConfig {
     public void load() {
         try {
             document.reload();
+            relocate();
 
             if (fields.isEmpty()) {
                 step(getClass(), "", true);
@@ -241,6 +244,26 @@ public abstract class StaticConfig {
         } catch (Exception exception) {
             throw new IOException("Format failed for file '" + file.getName() + "'.", exception);
         }
+    }
+
+    protected void relocate(String target, String replacement) {
+        relocations.computeIfAbsent(replacement, key -> new ArrayList<>()).add(target);
+    }
+
+    private void relocate() {
+        relocations.forEach((replacement, targets) -> {
+            for (String target : targets) {
+                if (!document.contains(target)) continue;
+
+                document.set(replacement, document.get(target));
+                document.remove(target);
+
+                handler.getLogger().warning(
+                    "Value from '" + target + "' was " +
+                    "relocated to '" + replacement + "'."
+                );
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
