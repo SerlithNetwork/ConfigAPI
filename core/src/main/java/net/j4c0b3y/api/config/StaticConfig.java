@@ -32,13 +32,13 @@ public abstract class StaticConfig {
     private final ConfigHandler handler;
     private final ConfigDocument document;
 
+    private final HashMap<String, List<String>> relocations = new HashMap<>();
+
     @Getter(AccessLevel.NONE)
     private final Map<String, Field> fields = new HashMap<>();
 
     @Getter(AccessLevel.NONE)
     private final HashMap<String, Boolean> routes = new HashMap<>();
-
-    private final HashMap<String, List<String>> relocations = new HashMap<>();
 
     @Getter(AccessLevel.NONE)
     private boolean success = true;
