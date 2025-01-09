@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * @author J4C0B3Y
@@ -71,6 +72,7 @@ public class ConfigHandler {
         bind(boolean.class, new BooleanProvider());
         bind(UUID.class, new UUIDProvider());
         bind(URI.class, new URIProvider());
+        bind(Pattern.class, new PatternProvider());
 
         bind(int.class, new NumberProvider<>(Integer::parseInt));
         bind(long.class, new NumberProvider<>(Long::parseLong));
