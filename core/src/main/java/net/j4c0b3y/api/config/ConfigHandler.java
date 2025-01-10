@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
  * @version ConfigAPI
  * @since 9/10/2024
  */
-
 @Getter(AccessLevel.PROTECTED) @Setter
 public class ConfigHandler {
 
@@ -67,11 +66,10 @@ public class ConfigHandler {
         register(new CollectionResolver(this));
         register(new MapResolver(this));
 
-        bind(String.class, new StringProvider());
-        bind(boolean.class, new BooleanProvider());
-        bind(UUID.class, new UUIDProvider());
-        bind(URI.class, new URIProvider());
-        bind(Pattern.class, new PatternProvider());
+        bind(String.class, new SimpleProvider<>(String::valueOf));
+        bind(UUID.class, new SimpleProvider<>(UUID::fromString));
+        bind(URI.class, new SimpleProvider<>(URI::create));
+        bind(Pattern.class, new SimpleProvider<>(Pattern::compile));
 
         bind(int.class, new NumberProvider<>(Integer::parseInt));
         bind(long.class, new NumberProvider<>(Long::parseLong));
@@ -79,6 +77,8 @@ public class ConfigHandler {
         bind(float.class, new NumberProvider<>(Float::parseFloat));
         bind(double.class, new NumberProvider<>(Double::parseDouble));
         bind(short.class, new NumberProvider<>(Short::parseShort));
+
+        bind(boolean.class, new BooleanProvider());
     }
 
     public ConfigHandler() {
