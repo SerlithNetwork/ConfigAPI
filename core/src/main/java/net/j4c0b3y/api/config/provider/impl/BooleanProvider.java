@@ -1,6 +1,8 @@
 package net.j4c0b3y.api.config.provider.impl;
 
 import net.j4c0b3y.api.config.provider.TypeProvider;
+import net.j4c0b3y.api.config.provider.context.LoadContext;
+import net.j4c0b3y.api.config.provider.context.SaveContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,8 +17,8 @@ public class BooleanProvider implements TypeProvider<Boolean> {
     private final static List<String> FALSE_VALUES = Arrays.asList("false", "no", "0");
 
     @Override
-    public Boolean load(Object object) {
-        String lowered = String.valueOf(object).toLowerCase();
+    public Boolean load(LoadContext context) {
+        String lowered = String.valueOf(context.getObject()).toLowerCase();
 
         for (String value : TRUE_VALUES) {
             if (lowered.equals(value)) {
@@ -34,7 +36,7 @@ public class BooleanProvider implements TypeProvider<Boolean> {
     }
 
     @Override
-    public Object save(Boolean object) {
-        return object;
+    public Object save(SaveContext<Boolean> context) {
+        return context.getObject();
     }
 }

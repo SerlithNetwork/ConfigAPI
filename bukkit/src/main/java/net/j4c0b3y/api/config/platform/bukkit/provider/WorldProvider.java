@@ -1,6 +1,8 @@
 package net.j4c0b3y.api.config.platform.bukkit.provider;
 
 import net.j4c0b3y.api.config.provider.TypeProvider;
+import net.j4c0b3y.api.config.provider.context.LoadContext;
+import net.j4c0b3y.api.config.provider.context.SaveContext;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -12,8 +14,8 @@ import org.bukkit.World;
 public class WorldProvider implements TypeProvider<World> {
 
     @Override
-    public World load(Object object) {
-        World world = Bukkit.getWorld(String.valueOf(object));
+    public World load(LoadContext context) {
+        World world = Bukkit.getWorld(String.valueOf(context.getObject()));
 
         if (world == null) {
             throw new IllegalArgumentException("There is no world with a matching name.");
@@ -23,7 +25,7 @@ public class WorldProvider implements TypeProvider<World> {
     }
 
     @Override
-    public Object save(World world) {
-        return world.getName();
+    public Object save(SaveContext<World> context) {
+        return context.getObject().getName();
     }
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import net.j4c0b3y.api.config.exception.LoadFailedException;
 import net.j4c0b3y.api.config.exception.SaveFailedException;
 import net.j4c0b3y.api.config.provider.TypeProvider;
+import net.j4c0b3y.api.config.provider.context.LoadContext;
+import net.j4c0b3y.api.config.provider.context.SaveContext;
 import net.j4c0b3y.api.config.utils.ClassUtils;
 
 import java.io.File;
@@ -83,7 +85,9 @@ public abstract class StaticConfig {
 
                 try {
                     if (document.contains(route)) {
-                        field.set(null, handler.provide(field).load(document.get(route)));
+                        field.set(null, handler.provide(field).load(
+                            new LoadContext(route, document.get(route))
+                        ));
                     }
                 } catch (Exception exception) {
                     throw new IOException("Failed to load key '" + route + "'.", exception);
@@ -268,7 +272,9 @@ public abstract class StaticConfig {
 
     @SuppressWarnings("unchecked")
     private <T> void set(String key, Field field, T value) {
-        document.set(key, ((TypeProvider<T>) handler.provide(field)).save(value));
+        SaveContext<T> context = new SaveContext<>(key, value);
+        Object object = ((TypeProvider<T>) handler.provide(field)).save(context);
+        document.set(context.getKey(), object);
     }
 
     private String getRoute(Key key, String name) {

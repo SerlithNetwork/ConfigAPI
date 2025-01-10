@@ -3,6 +3,8 @@ package net.j4c0b3y.api.config.platform.bukkit.provider;
 import lombok.RequiredArgsConstructor;
 import net.j4c0b3y.api.config.ConfigHandler;
 import net.j4c0b3y.api.config.provider.TypeProvider;
+import net.j4c0b3y.api.config.provider.context.LoadContext;
+import net.j4c0b3y.api.config.provider.context.SaveContext;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -16,8 +18,8 @@ public class LocationProvider implements TypeProvider<Location> {
     private final ConfigHandler handler;
 
     @Override
-    public Location load(Object object) {
-        String[] parts = String.valueOf(object).split(",");
+    public Location load(LoadContext context) {
+        String[] parts = String.valueOf(context.getObject()).split(",");
 
         if (parts.length != 6) {
             throw new IllegalArgumentException("Location must have world, xyz, yaw and pitch.");
@@ -27,18 +29,20 @@ public class LocationProvider implements TypeProvider<Location> {
         TypeProvider<Double> doubleProvider = handler.provide(double.class);
         TypeProvider<Float> floatProvider = handler.provide(float.class);
 
-        World world = worldProvider.load(parts[0]);
-        double x = doubleProvider.load(parts[1]);
-        double y = doubleProvider.load(parts[2]);
-        double z = doubleProvider.load(parts[3]);
-        float yaw = floatProvider.load(parts[4]);
-        float pitch = floatProvider.load(parts[5]);
+        World world = worldProvider.load(new LoadContext(null, parts[0]));
+        double x = doubleProvider.load(new LoadContext(null, parts[1]));
+        double y = doubleProvider.load(new LoadContext(null, parts[2]));
+        double z = doubleProvider.load(new LoadContext(null, parts[3]));
+        float yaw = floatProvider.load(new LoadContext(null, parts[4]));
+        float pitch = floatProvider.load(new LoadContext(null, parts[5]));
 
         return new Location(world, x, y, z, yaw, pitch);
     }
 
     @Override
-    public Object save(Location location) {
+    public Object save(SaveContext<Location> context) {
+        Location location = context.getObject();
+
         String world = location.getWorld().getName();
         String x = String.valueOf(location.getX());
         String y = String.valueOf(location.getY());

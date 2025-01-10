@@ -3,6 +3,8 @@ package net.j4c0b3y.api.config.provider.impl;
 import lombok.RequiredArgsConstructor;
 import net.j4c0b3y.api.config.ConfigHandler;
 import net.j4c0b3y.api.config.provider.TypeProvider;
+import net.j4c0b3y.api.config.provider.context.LoadContext;
+import net.j4c0b3y.api.config.provider.context.SaveContext;
 import net.j4c0b3y.api.config.utils.ClassUtils;
 
 import java.lang.reflect.Field;
@@ -29,29 +31,37 @@ public class CollectionProvider<E, T extends Collection<E>> implements TypeProvi
     }
 
     @Override
-    public T load(Object object) {
+    public T load(LoadContext context) {
         TypeProvider<E> provider = handler.provide(generic);
         T collection = supplier.get();
 
         if (!Collection.class.isAssignableFrom(type)) {
-            collection.add(provider.load(object));
+            collection.add(provider.load(context));
             return collection;
         }
 
-        for (Object element : (Collection<Object>) object) {
-            collection.add(provider.load(element));
+        int index = 0;
+
+        for (Object element : (Collection<Object>) context.getObject()) {
+            collection.add(provider.load(
+                new LoadContext(String.valueOf(index++), element)
+            ));
         }
 
         return collection;
     }
 
     @Override
-    public Object save(T object) {
+    public Object save(SaveContext<T> context) {
         TypeProvider<E> provider = handler.provide(generic);
         List<Object> list = new ArrayList<>();
 
-        for (E element : object) {
-            list.add(provider.save(element));
+        int index = 0;
+
+        for (E element : context.getObject()) {
+            list.add(provider.save(
+                new SaveContext<>(String.valueOf(index++), element)
+            ));
         }
 
         return list;
