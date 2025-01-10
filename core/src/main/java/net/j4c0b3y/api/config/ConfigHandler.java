@@ -49,9 +49,8 @@ public class ConfigHandler {
     private final Logger logger;
 
     private boolean formatStructure = true;
-    private boolean spaceBeforeComment = true;
-
     private boolean formatValues = true;
+
     private boolean removeUnrecognised = true;
     private boolean createBackupOnRemove = true;
 

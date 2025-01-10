@@ -43,7 +43,7 @@ public class ConfigDocument extends YamlDocument {
 
         String header = config.getHeader()
             .stream()
-            .map(line -> "#" + formatComment(line) + "\n")
+            .map(line -> "# " + line + "\n")
             .collect(Collectors.joining());
 
         return header + (!header.isEmpty() ? "\n" : "") + content;
@@ -74,14 +74,10 @@ public class ConfigDocument extends YamlDocument {
         if (comment == null) return;
 
         List<String> lines = Arrays.stream(comment.value())
-            .map(this::formatComment)
+            .map(line -> " " + line)
             .collect(Collectors.toList());
 
         block.setComments(lines);
-    }
-
-    private String formatComment(String line) {
-        return (handler.isSpaceBeforeComment() ? " " : "") + line;
     }
 
     public String format(String content) {
