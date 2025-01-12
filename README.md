@@ -1,4 +1,4 @@
-# CommandAPI
+# ConfigAPI
 
 Flexible and robust static access configuration api.
 
