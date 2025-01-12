@@ -21,4 +21,8 @@ public class BukkitConfigHandler extends ConfigHandler {
         bind(World.class, new WorldProvider());
         bind(Location.class, new LocationProvider(this));
     }
+
+    public BukkitConfigHandler() {
+        this(Logger.getLogger("ConfigAPI"));
+    }
 }
