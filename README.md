@@ -2,7 +2,7 @@
 
 Flexible and robust static access configuration api.
 
-> Special thanks to [dejvokep](https://github.com/dejvokep) for [boosted yaml](https://github.com/dejvokep/boosted-yaml), 
+> Special thanks to [dejvokep](https://github.com/dejvokep) for [BoostedYAML](https://github.com/dejvokep/boosted-yaml), 
 > which is used internally for yaml parsing and file management.
 
 ###### Trusted and used by [Refine Development](https://refinedev.xyz/).
