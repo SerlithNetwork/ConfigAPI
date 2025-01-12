@@ -4,6 +4,9 @@ Flexible and robust static access configuration api.
 
 Trusted and used by [Refine Development](https://refinedev.xyz/).
 
+> Special thanks to [dejvokep](https://github.com/dejvokep) for [boosted yaml](https://github.com/dejvokep/boosted-yaml), 
+> which is used under the hood for yaml parsing, dumping and file management.
+
 ## Features
 
 - Static and dynamic config value access
