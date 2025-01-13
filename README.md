@@ -327,7 +327,7 @@ public Settings(ConfigHandler handler) {
 } 
 ```
 
-This will relocate value currently the `target` key if present,
+This will relocate the value of the `target` key if present,
 to the `replacement` key, then delete the `target` key.
 
 ### Backups
