@@ -19,7 +19,7 @@ public class BukkitConfigHandler extends ConfigHandler {
         super(logger);
 
         bind(World.class, new WorldProvider());
-        bind(Location.class, new LocationProvider(this));
+        bind(Location.class, new LocationProvider());
     }
 
     public BukkitConfigHandler() {
