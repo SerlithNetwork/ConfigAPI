@@ -12,6 +12,14 @@ import lombok.Setter;
 @Getter @Setter
 @AllArgsConstructor
 public class SaveContext<T> {
+    /**
+     * The key to save as. If this is changed,
+     * the map provider changes the key name.
+     */
     private String key;
+
+    /**
+     * The object to serialize.
+     */
     private final T object;
 }

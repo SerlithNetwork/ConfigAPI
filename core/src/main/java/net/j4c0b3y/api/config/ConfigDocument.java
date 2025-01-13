@@ -19,16 +19,37 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Used for the internal loading, and file management.
+ *
  * @author J4C0B3Y
  * @version ConfigAPI
  * @since 9/10/2024
  */
 public class ConfigDocument extends YamlDocument {
+    /**
+     * The associated static config.
+     */
     private final StaticConfig config;
+
+    /**
+     * The static config's associated handler.
+     */
     private final ConfigHandler handler;
 
+    /**
+     * The YamlDocument automatically loads in the constructor,
+     * we intercept the load and prevent it if this value is false.
+     * The value is false until this class's constructor is called,
+     * then loading is allowed, which should be done manually by the user.
+     */
     private final boolean allowLoad;
 
+    /**
+     * Creates a new config document to be used with our static config.
+     *
+     * @param config The associated static config.
+     * @param defaults The default values.
+     */
     public ConfigDocument(StaticConfig config, InputStream defaults) throws IOException {
         super(config.getFile(), defaults, config.getHandler().getDocumentSettings());
         this.config = config;
@@ -36,6 +57,12 @@ public class ConfigDocument extends YamlDocument {
         this.allowLoad = true;
     }
 
+    /**
+     * Dumps the yaml document, formatting the structure and adding the file header.
+     *
+     * @param settings The dumper settings.
+     * @return The dumped yaml document.
+     */
     @Override
     public String dump(@NotNull DumperSettings settings) {
         String dump = super.dump(settings);
@@ -49,11 +76,17 @@ public class ConfigDocument extends YamlDocument {
         return header + (!header.isEmpty() ? "\n" : "") + content;
     }
 
+    /**
+     * Intercept reloading to prevent the initial load.
+     */
     @Override
     public boolean reload() throws IOException {
         return allowLoad && super.reload();
     }
 
+    /**
+     * Wipe all comments on the entire document.
+     */
     public void wipeComments() {
         for (Route route : getRoutes(true)) {
             wipeComments(getBlock(route));
@@ -62,6 +95,11 @@ public class ConfigDocument extends YamlDocument {
         wipeComments(this);
     }
 
+    /**
+     * Wipes comments on all possible positions and roles for a block.
+     *
+     * @param block The block to wipe comments for.
+     */
     public void wipeComments(Block<?> block) {
         for (NodeRole role : NodeRole.values()) {
             for (Comments.Position position : Comments.Position.values()) {
@@ -70,6 +108,12 @@ public class ConfigDocument extends YamlDocument {
         }
     }
 
+    /**
+     * Sets a block's comment using the Comment annotation value.
+     *
+     * @param block The block to set the comment for.
+     * @param comment The comment annotation.
+     */
     protected void setComment(Block<?> block, StaticConfig.Comment comment) {
         if (comment == null) return;
 
@@ -80,6 +124,12 @@ public class ConfigDocument extends YamlDocument {
         block.setComments(lines);
     }
 
+    /**
+     * Formats the config document structure.
+     *
+     * @param content The file content.
+     * @return The formatted content.
+     */
     public String format(String content) {
         List<String> formatted = new ArrayList<>();
         String[] lines = content.split("\n");
@@ -102,6 +152,11 @@ public class ConfigDocument extends YamlDocument {
         return String.join("\n", formatted);
     }
 
+    /**
+     * Creates a backup of the document file.
+     *
+     * @return The backup file name.
+     */
     public String backup() throws IOException {
         Path path = getFile() != null ? getFile().toPath() : null;
 

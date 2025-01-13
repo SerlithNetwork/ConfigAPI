@@ -7,6 +7,8 @@ import net.j4c0b3y.api.config.resolver.TypeResolver;
 import java.lang.reflect.Field;
 
 /**
+ * Resolves enum values to our inbuilt enum provider.
+ *
  * @author J4C0B3Y
  * @version ConfigAPI
  * @since 9/11/2024
@@ -16,6 +18,7 @@ public class EnumResolver implements TypeResolver {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> TypeProvider<T> resolve(Class<T> type, Field field) {
+        // If the type is not an enum, return.
         if (!type.isEnum()) {
             return null;
         }

@@ -8,12 +8,17 @@ import net.j4c0b3y.api.config.provider.context.SaveContext;
 import java.util.function.Function;
 
 /**
+ * Used for loading and saving of number based types.
+ *
  * @author J4C0B3Y
  * @version ConfigAPI
  * @since 9/11/2024
  */
 @RequiredArgsConstructor
 public class NumberProvider<T extends Number> implements TypeProvider<T> {
+    /**
+     * The parsing function.
+     */
     private final Function<String, T> parser;
 
     @Override

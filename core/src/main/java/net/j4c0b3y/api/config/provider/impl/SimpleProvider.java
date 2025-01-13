@@ -9,6 +9,8 @@ import net.j4c0b3y.api.config.provider.context.SaveContext;
 import java.util.function.Function;
 
 /**
+ * A simple provider, requiring a parser and an optional saver.
+ *
  * @author J4C0B3Y
  * @version ConfigAPI
  * @since 9/11/2024
@@ -16,7 +18,14 @@ import java.util.function.Function;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class SimpleProvider<T> implements TypeProvider<T> {
+    /**
+     * The parsing function.
+     */
     private final Function<String, T> parser;
+
+    /**
+     * The saving function.
+     */
     private Function<T, String> saver = Object::toString;
 
     @Override

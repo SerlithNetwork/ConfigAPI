@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
+ * Used to load and save bukkit's Location class.
+ *
  * @author J4C0B3Y
  * @version ConfigAPI
  * @since 13/01/2025

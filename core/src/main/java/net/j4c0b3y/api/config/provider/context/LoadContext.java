@@ -11,6 +11,13 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class LoadContext {
+    /**
+     * The key to load from.
+     */
     private final String key;
+
+    /**
+     * The object to deserialize.
+     */
     private final Object object;
 }

@@ -9,7 +9,12 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class StringUtils {
-
+    /**
+     * Gets the amount of indentation at the start of a line.
+     *
+     * @param line The line.
+     * @return The indentation.
+     */
     public int getIndentation(String line) {
         return line.length() - line.replaceFirst("^\\s+","").length();
     }
