@@ -35,7 +35,8 @@ public class CollectionProvider<E, T extends Collection<E>> implements TypeProvi
         TypeProvider<E> provider = handler.provide(generic);
         T collection = supplier.get();
 
-        if (!Collection.class.isAssignableFrom(type)) {
+        // If the context object isn't a collection, load it as one value.
+        if (!Collection.class.isAssignableFrom(context.getObject().getClass())) {
             collection.add(provider.load(context));
             return collection;
         }
