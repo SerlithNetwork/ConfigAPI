@@ -191,7 +191,7 @@ configHandler.setKeyFormatter(key -> key.replace("_", ""));
 Providers are how field values are translated between java objects and yaml values.
 
 There are inbuilt providers for strings, number primitives and wrappers, any enum,
-uuids, uris, regex patterns, booleans, any many more.
+UUIDs, URIs, regex patterns, booleans, any many more.
 
 You can even have lists, sets and other collections of the registered provider types.
 
@@ -239,7 +239,7 @@ public static boolean ENABLED = false;
 
 @Comment({
     "This is a multi line comment,", 
-    "go in depth with you explanation."
+    "go in depth with your explanation."
 })
 public static int VERSION = 1;
 ```
@@ -249,7 +249,7 @@ public static int VERSION = 1;
 enabled: false
 
 # This is a multi line comment,
-# go in depth with you explanation.
+# go in depth with your explanation.
 version: 1
 ```
 
