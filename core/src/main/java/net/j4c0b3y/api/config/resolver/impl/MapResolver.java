@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- * Resolves string to ?, maps to our inbuilt map provider.
+ * Resolves string to ? maps to our inbuilt map provider.
  *
  * @author J4C0B3Y
  * @version ConfigAPI
