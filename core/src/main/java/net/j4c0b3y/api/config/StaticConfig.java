@@ -409,7 +409,7 @@ public abstract class StaticConfig {
             if (block == null) return;
 
             List<String> comments = block.getComments();
-            if (comments == null || !comments.isEmpty()) return;
+            if (comments != null && !comments.isEmpty()) return;
 
             document.setComment(block, comment);
         });
