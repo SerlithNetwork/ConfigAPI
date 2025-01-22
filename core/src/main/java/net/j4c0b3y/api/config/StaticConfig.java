@@ -1,5 +1,6 @@
 package net.j4c0b3y.api.config;
 
+import dev.dejvokep.boostedyaml.block.Block;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -66,6 +67,11 @@ public abstract class StaticConfig {
      * A map of relocation replacements to their target paths.
      */
     private final Map<String, List<String>> relocations = new HashMap<>();
+
+    /**
+     * A map of custom comments to add to fields.
+     */
+    private final Map<String, List<String>> comments = new HashMap<>();
 
     /**
      * If the last load operation was successful.
@@ -192,6 +198,9 @@ public abstract class StaticConfig {
 
             // Recurse through the static fields, setting the values in the document.
             step(getClass(), "", false);
+
+            // Set the additional custom comments specified by the user.
+            setComments();
 
             // Save the document values and comments to file.
             document.save();
@@ -378,6 +387,31 @@ public abstract class StaticConfig {
                     "relocated to '" + replacement + "'."
                 );
             }
+        });
+    }
+
+    /**
+     * Adds a custom comment to a route in the document.
+     *
+     * @param route The route.
+     * @param comment The comment.
+     */
+    protected void setComment(String route, String ...comment) {
+        comments.put(route, Arrays.asList(comment));
+    }
+
+    /**
+     * Sets the custom comments for routes that exist in the document.
+     */
+    private void setComments() {
+        comments.forEach((route, comment) -> {
+            Block<?> block = document.getBlock(route);
+            if (block == null) return;
+
+            List<String> comments = block.getComments();
+            if (comments == null || !comments.isEmpty()) return;
+
+            document.setComment(block, comment);
         });
     }
 

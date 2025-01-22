@@ -115,9 +115,19 @@ public class ConfigDocument extends YamlDocument {
      * @param comment The comment annotation.
      */
     protected void setComment(Block<?> block, StaticConfig.Comment comment) {
-        if (comment == null) return;
+        if (comment != null) {
+            setComment(block, Arrays.asList(comment.value()));
+        }
+    }
 
-        List<String> lines = Arrays.stream(comment.value())
+    /**
+     * Sets a block's comment using a string list.
+     *
+     * @param block The block to set the comment for.
+     * @param comment The comment list.
+     */
+    protected void setComment(Block<?> block, List<String> comment) {
+        List<String> lines = comment.stream()
             .map(line -> " " + line)
             .collect(Collectors.toList());
 
