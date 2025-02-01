@@ -144,18 +144,25 @@ public class ConfigDocument extends YamlDocument {
         List<String> formatted = new ArrayList<>();
         String[] lines = content.split("\n");
 
-        int previous = -1;
+        int previousIndentation = -1;
+        boolean previousComment = false;
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].isEmpty()) continue;
 
-            int current = StringUtils.getIndentation(lines[i]);
+            int currentIndentation = StringUtils.getIndentation(lines[i]);
+            boolean currentComment = lines[i].trim().startsWith("#");
 
-            if (current == 0 && previous > 0) {
+            boolean comment = currentComment && !previousComment && previousIndentation >= currentIndentation;
+            boolean section = currentIndentation == 0 && previousIndentation > 0 && !previousComment;
+
+            if (comment || section) {
                 lines[i] = "\n" + lines[i];
             }
 
-            previous = current;
+            previousIndentation = currentIndentation;
+            previousComment = currentComment;
+
             formatted.add(lines[i]);
         }
 
