@@ -183,7 +183,7 @@ The key formatter can be changed using the following method:
 
 ```java
 // Maintains the capitalization, but still replaces _ with -.
-configHandler.setKeyFormatter(key -> key.replace("_", ""));
+configHandler.setKeyFormatter(key -> key.replace("_", "-"));
 ```
 
 ### Providers
