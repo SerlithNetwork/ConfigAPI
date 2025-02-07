@@ -3,6 +3,8 @@ package net.j4c0b3y.api.config;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.Block;
 import dev.dejvokep.boostedyaml.block.Comments;
+import dev.dejvokep.boostedyaml.block.Comments.Position;
+import dev.dejvokep.boostedyaml.libs.org.snakeyaml.engine.v2.comments.CommentLine;
 import dev.dejvokep.boostedyaml.route.Route;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.utils.format.NodeRole;
@@ -116,7 +118,7 @@ public class ConfigDocument extends YamlDocument {
      */
     protected void setComment(Block<?> block, StaticConfig.Comment comment) {
         if (comment != null) {
-            setComment(block, Arrays.asList(comment.value()));
+            setComment(block, Arrays.asList(comment.value()), comment.side());
         }
     }
 
@@ -126,12 +128,15 @@ public class ConfigDocument extends YamlDocument {
      * @param block The block to set the comment for.
      * @param comment The comment list.
      */
-    protected void setComment(Block<?> block, List<String> comment) {
-        List<String> lines = comment.stream()
-            .map(line -> " " + line)
+    protected void setComment(Block<?> block, List<String> comment, boolean side) {
+        Position position = side ? Position.INLINE : Position.BEFORE;
+        NodeRole role = side ? NodeRole.VALUE : NodeRole.KEY;
+
+        List<CommentLine> lines = comment.stream()
+            .map(line -> Comments.create(" " + line, position))
             .collect(Collectors.toList());
 
-        block.setComments(lines);
+        Comments.set(block, role, position, lines);
     }
 
     /**

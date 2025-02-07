@@ -10,6 +10,7 @@ import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
 import net.j4c0b3y.api.config.utils.ClassUtils;
+import net.j4c0b3y.api.config.utils.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,7 +72,7 @@ public abstract class StaticConfig {
     /**
      * A map of custom comments to add to fields.
      */
-    private final Map<String, List<String>> comments = new HashMap<>();
+    private final Map<String, Pair<List<String>, Boolean>> comments = new HashMap<>();
 
     /**
      * If the last load operation was successful.
@@ -394,10 +395,21 @@ public abstract class StaticConfig {
      * Adds a custom comment to a route in the document.
      *
      * @param route The route.
+     * @param side If the comment is on the side.
+     * @param comment The comment.
+     */
+    protected void setComment(String route, boolean side, String ...comment) {
+        comments.put(route, new Pair<>(Arrays.asList(comment), side));
+    }
+
+    /**
+     * Adds a custom comment to a route in the document.
+     *
+     * @param route The route.
      * @param comment The comment.
      */
     protected void setComment(String route, String ...comment) {
-        comments.put(route, Arrays.asList(comment));
+        setComment(route, false, comment);
     }
 
     /**
@@ -411,7 +423,7 @@ public abstract class StaticConfig {
             List<String> comments = block.getComments();
             if (comments != null && !comments.isEmpty()) return;
 
-            document.setComment(block, comment);
+            document.setComment(block, comment.getLeft(), comment.getRight());
         });
     }
 
@@ -458,6 +470,7 @@ public abstract class StaticConfig {
     @Target({ElementType.TYPE, ElementType.FIELD})
     protected @interface Comment {
         String[] value();
+        boolean side() default false;
     }
 
     /**
