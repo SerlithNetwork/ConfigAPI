@@ -114,7 +114,10 @@ public abstract class StaticConfig {
      * @return The header to be shown at the top of the document file.
      */
     public List<String> getHeader() {
-        return Collections.emptyList();
+        Header header = getClass().getAnnotation(Header.class);
+        if (header == null) return Collections.emptyList();
+
+        return Arrays.asList(header.value());
     }
 
     /**
@@ -496,5 +499,11 @@ public abstract class StaticConfig {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})
     protected @interface Manual {
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE})
+    public @interface Header {
+        String[] value();
     }
 }
