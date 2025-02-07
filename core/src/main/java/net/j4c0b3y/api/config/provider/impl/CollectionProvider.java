@@ -47,7 +47,11 @@ public class CollectionProvider<E, T extends Collection<E>> implements TypeProvi
      * @param handler The config handler
      */
     public CollectionProvider(Field field, Supplier<T> supplier, Class<T> ignored, ConfigHandler handler) {
-        this(supplier, (Class<E>) ClassUtils.getGenerics(field)[0], handler);
+        this(supplier, (Class<E>) (field != null ? ClassUtils.getGenerics(field)[0] : null), handler);
+
+        if (field == null) {
+            throw new IllegalStateException("Nested collections are not supported!");
+        }
     }
 
     @Override
