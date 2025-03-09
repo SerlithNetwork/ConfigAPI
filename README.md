@@ -17,7 +17,8 @@ Flexible and robust static access configuration api.
 - File structure and value formatting
 - Annotation based field modifiers
 - Automatic header and footer comments
-- Small and lightweight (~490kb)
+- User friendly message utility class
+- Small and lightweight (~500kb)
 
 ## Support
 
