@@ -75,7 +75,12 @@ public class ConfigDocument extends YamlDocument {
             .map(line -> "# " + line + "\n")
             .collect(Collectors.joining());
 
-        return header + (!header.isEmpty() ? "\n" : "") + content;
+        String footer = config.getFooter()
+            .stream()
+            .map(line -> "# " + line + "\n")
+            .collect(Collectors.joining());
+
+        return header + (!header.isEmpty() ? "\n" : "") + content + "\n" + footer;
     }
 
     /**

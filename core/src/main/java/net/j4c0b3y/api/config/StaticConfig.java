@@ -121,6 +121,16 @@ public abstract class StaticConfig {
     }
 
     /**
+     * @return The footer to be shown at the bottom of the document file.
+     */
+    public List<String> getFooter() {
+        Footer footer = getClass().getAnnotation(Footer.class);
+        if (footer == null) return Collections.emptyList();
+
+        return Arrays.asList(footer.value());
+    }
+
+    /**
      * Creates, relocates and loads the document keys into the static fields.
      */
     public void load() {
@@ -488,9 +498,21 @@ public abstract class StaticConfig {
     protected @interface Hidden {
     }
 
+    /**
+     * Adds a header comment to the top of the config document.
+     */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE})
     public @interface Header {
+        String[] value();
+    }
+
+    /**
+     * Adds a footer comment to the bottom of the config document.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE})
+    public @interface Footer {
         String[] value();
     }
 }
