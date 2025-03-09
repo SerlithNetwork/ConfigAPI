@@ -445,7 +445,7 @@ test:
 
 The config api comes with an in-built `Message` class that you can use
 to send single or multi-line messages with replaced placeholders and
-translations easily to a play or other form of user.
+translations easily to a player or other form of user.
 
 #### Usage
 
