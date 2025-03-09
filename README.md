@@ -9,7 +9,7 @@ Flexible and robust static access configuration api.
 
 ## Features
 
-- Static and dynamic config value access
+- Seamless static config value access
 - Use inbuilt or register custom type loading
 - Move config values with path relocations
 - Configurable config file backup system
@@ -291,15 +291,6 @@ override: true
 # OVERRIDE is set to true.
 ```
 
-#### @Manual
-
-Used when you plan to directly read values from the config document,
-prevents the section from being touched by the unknown key remover.
-
-If a field is a map, it is automatically marked as manual so its entries aren't removed.
-
-Please see the `Direct Access` section below for more information.
-
 ### Final Members
 
 If a field or class is marked final, its value is always reset in the config.
@@ -351,20 +342,6 @@ Backups can also be created manually through the config document.
 ```java
 // Returns the filename of the backed up file.
 String fileName = config.getDocument().backup();
-```
-
-### Direct Access
-
-Direct access to values can be used for dynamically loaded functionality,
-make sure the section you are performing direct access on is marked `@Manual`.
-
-```java
-@Manual
-public static class EXAMPLE { }
-```
-
-```java
-config.getDocument().getBoolean("example.enabled");
 ```
 
 ### Resolvers 
