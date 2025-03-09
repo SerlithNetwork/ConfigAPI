@@ -268,11 +268,10 @@ public abstract class StaticConfig {
 
             // Get the route by combining the current path and the formatted key.
             String route = path + getRoute(clazz.getAnnotation(Key.class), clazz.getSimpleName());
-            boolean manual = clazz.isAnnotationPresent(Manual.class);
 
             // Add the routes and recurse if we are in the initialization phase.
             if (initialize) {
-                routes.put(route, manual);
+                routes.put(route, false);
                 step(clazz, route + ".", true);
                 continue;
             }
@@ -284,16 +283,13 @@ public abstract class StaticConfig {
 
             Section section = document.getSection(route);
 
-            // Skip if the class is manual and the section already exists.
-            boolean skip = manual && section != null;
-
             // If the section doesn't exist and is not hidden, create it.
             if (section == null && !clazz.isAnnotationPresent(Hidden.class)) {
                 section = document.createSection(route);
             }
 
             // If the section exists, and we shouldn't skip, set the comment and recurse.
-            if (section != null && !skip) {
+            if (section != null) {
                 document.setComment(section, clazz.getAnnotation(Comment.class));
                 step(clazz, route + ".", false);
             }
@@ -490,15 +486,6 @@ public abstract class StaticConfig {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE, ElementType.FIELD})
     protected @interface Hidden {
-    }
-
-    /**
-     * Used when dynamically reading values off the document (getString()),
-     * prevents the section from being touched by the unknown key remover.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.TYPE})
-    protected @interface Manual {
     }
 
     @Retention(RetentionPolicy.RUNTIME)
