@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.j4c0b3y.api.config.exception.MissingProviderException;
+import net.j4c0b3y.api.config.message.Message;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.impl.*;
 import net.j4c0b3y.api.config.resolver.TypeResolver;
@@ -122,6 +123,7 @@ public class ConfigHandler {
         bind(short.class, new NumberProvider<>(Short::parseShort));
 
         bind(boolean.class, new BooleanProvider());
+        bind(Message.class, new MessageProvider());
     }
 
     /**
