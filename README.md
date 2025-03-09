@@ -16,7 +16,7 @@ Flexible and robust static access configuration api.
 - Remove unused / unknown keys + logging
 - File structure and value formatting
 - Annotation based field modifiers
-- Header comment at top of config file
+- Automatic header and footer comments
 - Small and lightweight (~490kb)
 
 ## Support
@@ -291,6 +291,64 @@ override: true
 # OVERRIDE is set to true.
 ```
 
+#### @Header & @Footer
+
+- @Header is used to add a header comment to the top of a config document.
+- @Footer is used to add a footer comment to the bottom of a config document.
+
+```java
+@StaticConfig.Header("This is a header!")
+@StaticConfig.Footer({"This is a footer!", "Second line!"})
+public class Settings extends StaticConfig {}
+```
+
+<details>
+<summary>How to I remove <code>StaticConfig.</code> from the annotation?</summary>
+
+---
+
+You must statically import the Header annotation from the StaticConfig class.
+
+```java
+import static net.j4c0b3y.api.config.StaticConfig.Header;
+```
+
+Then you can use the annotation like this instead:
+
+```java
+@Header("This is a shorter way of using the header annotation!")
+public class Settings extends StaticConfig {}
+```
+
+---
+</details>
+
+```yaml
+# This is a header!
+
+example: true
+
+# This is a footer!
+# Second line!
+```
+
+#### Dynamic Headers
+
+If you would like to dynamically change the content of the header when saving,
+you can override the `public List<String> getHeader()/getFooter()` methods.
+
+```java
+import java.util.Arrays;
+
+public class Settings extends StaticConfig {
+
+    @Override
+    public List<String> getHeader() {
+        return Arrays.asList("Create a nice", "dynamic header!");
+    }
+}
+```
+
 ### Final Members
 
 If a field or class is marked final, its value is always reset in the config.
@@ -382,6 +440,47 @@ test:
   enabled: true
 ```
 </details>
+
+### Message Utility
+
+The config api comes with an in-built `Message` class that you can use
+to send single or multi-line messages with replaced placeholders and
+translations easily to a play or other form of user.
+
+#### Usage
+
+Here is an example of how it can be used, first create the default config.
+
+```java
+public class Messages extends StaticConfig {
+    // ...
+    public static Message RELOAD_SUCCESS = Message.of(
+        "&aSuccessfully reloaded in <duration>ms!"
+    );
+
+    public static Message RELOAD_FAILED = Message.of(
+        "&cAn issue occurred whilst reloading the plugin,",
+        "&cplease check console for any errors!"
+    );
+}
+```
+
+Second, use the message from the config to send the message to the user.
+
+```java
+Messages.RELOAD_SUCCESS
+    .replace("<duration>", duration) // Replace custom placeholders in each line.
+    .map(Color::translate) // Translate the message (parse papi placeholders as well).
+    .send(player::sendMessage); // Send each of the lines to the player or user.
+```
+
+#### Advantages
+
+The message utility is very useful for the following reasons:
+
+- Very clean usage and experience for the developer implementing logic.
+- Allows users to set the message as `[]` in the config to not send any message.
+- Allows users to choose whether they want single or multi line messages.
 
 ### Want more?
 
