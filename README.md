@@ -45,7 +45,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.j4c0b3y.ConfigAPI:PLATFORM:VERSION")
+    implementation("net.j4c0b3y:ConfigAPI-PLATFORM:VERSION")
 }
 ```
 
@@ -59,8 +59,8 @@ dependencies {
 
 <dependencies>
     <dependency>
-        <groupId>net.j4c0b3y.ConfigAPI</groupId>
-        <artifactId>PLATFORM</artifactId>
+        <groupId>net.j4c0b3y</groupId>
+        <artifactId>ConfigAPI-PLATFORM</artifactId>
         <version>VERSION</version>
     </dependency>
 </dependencies>
