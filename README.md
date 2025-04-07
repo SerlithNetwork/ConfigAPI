@@ -70,7 +70,7 @@ dependencies {
 
 1. Clone this repository and enter its directory.
 2. Run the intellij build configuration by clicking the top right icon.
-3. Alternatively you can run `gradle classes shadow delete copy install`.
+3. Alternatively you can run `gradle build`.
 4. The output jar files will be located in the `jars` directory.
 
 ## Usage
