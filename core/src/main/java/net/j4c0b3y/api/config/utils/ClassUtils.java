@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -36,25 +37,18 @@ public class ClassUtils {
         return (Class<T>) MethodType.methodType(type).wrap().returnType();
     }
 
-    /**
-     * Checks if a field contains certain modifiers.
-     *
-     * @param field The field to check.
-     * @param contains The modifiers.
-     * @return If the field contains the modifiers.
-     */
-    public boolean hasModifiers(Field field, int contains) {
-        return (field.getModifiers() & contains) == contains;
+    public boolean isCompanionClass(Class<?> clazz) {
+        if (!Modifier.isPublic(clazz.getModifiers())) return false;
+        if (!Modifier.isStatic(clazz.getModifiers())) return false;
+
+        return clazz.getSimpleName().equals("Companion");
     }
 
-    /**
-     * Checks if a class contains certain modifiers.
-     *
-     * @param clazz The class to check.
-     * @param contains The modifiers.
-     * @return If the class contains the modifiers.
-     */
-    public boolean hasModifiers(Class<?> clazz, int contains) {
-        return (clazz.getModifiers() & contains) == contains;
+    public boolean isCompanionField(Field field) {
+        if (!isCompanionClass(field.getType())) return false;
+        if (!Modifier.isStatic(field.getModifiers())) return false;
+        if (!Modifier.isFinal(field.getModifiers())) return false;
+
+        return field.getName().equals("Companion");
     }
 }

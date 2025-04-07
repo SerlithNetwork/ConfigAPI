@@ -33,11 +33,6 @@ import java.util.*;
 @Getter
 public abstract class StaticConfig {
     /**
-     * The modifiers for static config fields, this should never be changed.
-     */
-    private final static int MODIFIERS = Modifier.PUBLIC | Modifier.STATIC;
-
-    /**
      * The file the config document is associated with.
      */
     private final File file;
@@ -233,9 +228,15 @@ public abstract class StaticConfig {
     private void step(Class<?> parent, String path, boolean initialize) throws ReflectiveOperationException {
         for (Field field : parent.getDeclaredFields()) {
             // Skip field if its modifiers are invalid, or it is marked @Ignore.
-            if (!ClassUtils.hasModifiers(field, MODIFIERS) || field.isAnnotationPresent(Ignore.class)) {
+            if (!Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(Ignore.class)) {
                 continue;
             }
+
+            if (ClassUtils.isCompanionField(field)) {
+                continue;
+            }
+
+            field.setAccessible(true);
 
             // Get the route by combining the current path and the formatted key.
             String route = path + getRoute(field.getAnnotation(Key.class), field.getName());
@@ -272,7 +273,11 @@ public abstract class StaticConfig {
             Class<?> clazz = classes[i];
 
             // Skip field if its modifiers are invalid, or it is marked @Ignore.
-            if (!ClassUtils.hasModifiers(clazz, MODIFIERS) || clazz.isAnnotationPresent(Ignore.class)) {
+            if (!Modifier.isStatic(clazz.getModifiers()) || clazz.isAnnotationPresent(Ignore.class)) {
+                continue;
+            }
+
+            if (ClassUtils.isCompanionClass(clazz)) {
                 continue;
             }
 
