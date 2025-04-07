@@ -1,6 +1,7 @@
 package net.j4c0b3y.api.config.message;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -16,6 +17,8 @@ import java.util.function.Predicate;
  */
 @Getter
 public class Message {
+    @Setter private static Function<String, String> defaultMapper;
+
     /**
      * The messages current lines.
      */
@@ -107,6 +110,10 @@ public class Message {
      * @param consumer The send message consumer.
      */
     public void send(Consumer<String> consumer) {
-        this.lines.forEach(consumer);
+        // If there is a default mapper, use it to map each line.
+        Message message = defaultMapper != null ? this.map(defaultMapper) : this;
+
+        // Use the new message's lines for sending.
+        message.lines.forEach(consumer);
     }
 }
