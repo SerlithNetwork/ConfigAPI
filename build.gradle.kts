@@ -1,17 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.nio.charset.StandardCharsets
 import kotlin.io.path.Path
 
 plugins {
-    id("java")
-    id("maven-publish")
-    id("io.freefair.lombok") version "8.10"
-    id("com.gradleup.shadow") version "8.3.0"
+    java
+    `maven-publish`
+    id("io.freefair.lombok") version "8.12.1"
+    id("com.gradleup.shadow") version "9.0.0-beta8"
 }
 
 object Project {
     const val NAME = "ConfigAPI"
     const val GROUP = "net.j4c0b3y"
-    const val AUTHOR = "J4C0B3Y"
     const val VERSION = "1.2.2"
 }
 
@@ -24,8 +24,8 @@ allprojects {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "io.freefair.lombok")
-    apply(plugin = "com.gradleup.shadow")
     apply(plugin = "maven-publish")
+    apply(plugin = "com.gradleup.shadow")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,30 +33,27 @@ subprojects {
         withSourcesJar()
     }
 
-    dependencies {
-        if (name != "core") {
-            implementation(project(":core"))
-        }
-    }
-
     tasks {
+        compileJava {
+            options.encoding = StandardCharsets.UTF_8.name()
+        }
+
         register<Copy>("copy") {
-            from(named("shadowJar"))
+            from(shadowJar)
             rename("(.*)-all.jar", "${Project.NAME}-${this@subprojects.name}-${Project.VERSION}.jar")
             into(Path(rootDir.path, "jars"))
         }
 
-        named<JavaCompile>("compileJava") {
-            options.encoding = "UTF-8"
-        }
+        build { dependsOn(named("copy")) }
     }
 
     publishing {
         repositories {
-            maven {
+            maven("https://repo.j4c0b3y.net/public/") {
                 name = "j4c0b3yPublic"
-                url = uri("https://repo.j4c0b3y.net/public")
+
                 credentials(PasswordCredentials::class)
+
                 authentication {
                     create<BasicAuthentication>("basic")
                 }
@@ -64,9 +61,9 @@ subprojects {
         }
 
         publications {
-            create<MavenPublication>("release") {
-                artifactId = this@subprojects.name
-                groupId = "${Project.GROUP}.${Project.NAME}"
+            create<MavenPublication>(name) {
+                artifactId = Project.NAME + "-" + name
+                groupId = Project.GROUP
                 version = Project.VERSION
 
                 artifact(tasks.named<ShadowJar>("shadowJar").get().archiveFile)
@@ -79,32 +76,4 @@ subprojects {
     }
 }
 
-tasks {
-    named("classes") {
-        depend(this)
-    }
 
-    register("shadow") {
-        depend(this, "shadowJar")
-    }
-
-    register("delete") {
-        file("jars").deleteRecursively()
-    }
-
-    register("copy") {
-        depend(this)
-    }
-
-    named("clean") {
-        depend(this)
-    }
-
-    register("install") {
-        depend(this, "publishReleasePublicationToMavenLocal")
-    }
-}
-
-fun depend(task: Task, name: String = task.name) {
-    task.dependsOn(subprojects.map { it.tasks.named(name) })
-}
