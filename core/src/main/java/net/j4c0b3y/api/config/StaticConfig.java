@@ -15,10 +15,8 @@ import net.j4c0b3y.api.config.utils.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -138,7 +136,7 @@ public abstract class StaticConfig {
 
             // If fields are empty, perform the initialization.
             if (fields.isEmpty()) {
-                step(getClass(), "", true);
+                stepWrapper(getClass(), "", true);
             }
 
             // Load and set each field value from the document.
@@ -206,7 +204,7 @@ public abstract class StaticConfig {
             document.wipeComments(document);
 
             // Recurse through the static fields, setting the values in the document.
-            step(getClass(), "", false);
+            stepWrapper(getClass(), "", false);
 
             // Set the additional custom comments specified by the user.
             setComments();
@@ -216,6 +214,101 @@ public abstract class StaticConfig {
         } catch (Exception exception) {
             throw new SaveFailedException(file, exception);
         }
+    }
+
+    /**
+     * Wrapper before recursively step through each configuration section.
+     * Catches the top-level @Order annotation.
+     *
+     * @param parent The parent class of the section.
+     * @param path The current path.
+     * @param initialize If this is the initialization phase.
+     */
+    private void stepWrapper(Class<?> parent, String path, boolean initialize) throws ReflectiveOperationException, RuntimeException {
+        List<AnnotatedElement> values = new ArrayList<>();
+        values.addAll(Arrays.asList(parent.getDeclaredFields()));
+        values.addAll(Arrays.asList(parent.getDeclaredClasses()).reversed());
+        if (values.stream().noneMatch(e -> e.isAnnotationPresent(Order.class))) {
+            step(parent, path, initialize);
+            return;
+        }
+
+        values.stream().sorted((a, b) -> {
+            int priorityA = a.isAnnotationPresent(Order.class) ? a.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
+            int priorityB = b.isAnnotationPresent(Order.class) ? b.getAnnotation(Order.class).value() : Integer.MAX_VALUE;
+            return Integer.compare(priorityA, priorityB);
+        }).forEach(a -> {
+            try {
+                if (a instanceof Field) {
+                    Field field = (Field) a;
+                    if (!Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(Ignore.class)) return;
+                    if (ClassUtils.isCompanionField(field)) return;
+                    field.setAccessible(true);
+
+                    // Get the route by combining the current path and the formatted key.
+                    String route = path + getRoute(field.getAnnotation(Key.class), field.getName());
+
+                    // Add the fields and routes if we are in the initialization phase.
+                    if (initialize) {
+                        routes.put(route, true);
+                        fields.put(route, field);
+                        return;
+                    }
+
+                    boolean hidden = field.isAnnotationPresent(Hidden.class);
+                    boolean present = document.contains(route);
+
+                    // If this is the initial saving of the value in the document,
+                    // or the field is final, so we have to override the value anyway.
+                    boolean initial = (!present || Modifier.isFinal(field.getModifiers())) && !hidden;
+
+                    // Set the field value in the configuration document.
+                    if (initial || (!hidden || present)) {
+                        set(route, field, field.get(null));
+                    }
+
+                    // Set the associated comment for the route's block if present.
+                    document.setComment(document.getBlock(route), field.getAnnotation(Comment.class));
+
+                }
+                else if (a instanceof Class) {
+                    Class<?> clazz = (Class<?>) a;
+                    if (!Modifier.isStatic(clazz.getModifiers()) || clazz.isAnnotationPresent(Ignore.class)) return;
+                    if (ClassUtils.isCompanionClass(clazz)) return;
+
+                    // Get the route by combining the current path and the formatted key.
+                    String route = path + getRoute(clazz.getAnnotation(Key.class), clazz.getSimpleName());
+
+                    // Add the routes and recurse if we are in the initialization phase.
+                    if (initialize) {
+                        routes.put(route, false);
+                        step(clazz, route + ".", true);
+                        return;
+                    }
+
+                    // If the class is final, remove it so it is regenerated with default values.
+                    if (Modifier.isFinal(clazz.getModifiers())) {
+                        document.remove(route);
+                    }
+
+                    Section section = document.getSection(route);
+
+                    // If the section doesn't exist and is not hidden, create it.
+                    if (section == null && !clazz.isAnnotationPresent(Hidden.class)) {
+                        section = document.createSection(route);
+                    }
+
+                    // If the section exists, and we shouldn't skip, set the comment and recurse.
+                    if (section != null) {
+                        document.setComment(section, clazz.getAnnotation(Comment.class));
+                        step(clazz, route + ".", false);
+                    }
+
+                }
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
@@ -520,4 +613,11 @@ public abstract class StaticConfig {
     public @interface Footer {
         String[] value();
     }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface Order {
+        int value();
+    }
+
 }
