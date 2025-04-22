@@ -12,7 +12,7 @@ plugins {
 object Project {
     const val NAME = "ConfigAPI"
     const val GROUP = "net.j4c0b3y"
-    const val VERSION = "1.2.2"
+    const val VERSION = "1.2.2-SERLITH"
 }
 
 allprojects {
@@ -44,6 +44,11 @@ subprojects {
             into(Path(rootDir.path, "jars"))
         }
 
+        shadowJar {
+            exclude("org/jetbrains/**")
+            exclude("org/intellij/**")
+        }
+
         build { dependsOn(named("copy")) }
     }
 
@@ -58,6 +63,7 @@ subprojects {
                     create<BasicAuthentication>("basic")
                 }
             }
+            mavenLocal()
         }
 
         publications {
