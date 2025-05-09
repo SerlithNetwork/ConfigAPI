@@ -108,6 +108,7 @@ public class ConfigDocument extends YamlDocument {
      * @param block The block to wipe comments for.
      */
     public void wipeComments(Block<?> block) {
+        if (block == null) return;
         for (NodeRole role : NodeRole.values()) {
             for (Comments.Position position : Comments.Position.values()) {
                 Comments.remove(block, role, position);
@@ -122,7 +123,7 @@ public class ConfigDocument extends YamlDocument {
      * @param comment The comment annotation.
      */
     protected void setComment(Block<?> block, StaticConfig.Comment comment) {
-        if (comment != null) {
+        if (block != null && comment != null) {
             setComment(block, Arrays.asList(comment.value()), comment.side());
         }
     }
@@ -134,6 +135,7 @@ public class ConfigDocument extends YamlDocument {
      * @param comment The comment list.
      */
     protected void setComment(Block<?> block, List<String> comment, boolean side) {
+        if (block == null) return;
         Position position = side ? Position.INLINE : Position.BEFORE;
         NodeRole role = side ? NodeRole.VALUE : NodeRole.KEY;
 
