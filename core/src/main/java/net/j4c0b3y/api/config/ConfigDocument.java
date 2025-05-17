@@ -122,7 +122,7 @@ public class ConfigDocument extends YamlDocument {
      * @param comment The comment annotation.
      */
     protected void setComment(Block<?> block, StaticConfig.Comment comment) {
-        if (comment != null) {
+        if (block != null && comment != null) {
             setComment(block, Arrays.asList(comment.value()), comment.side());
         }
     }
