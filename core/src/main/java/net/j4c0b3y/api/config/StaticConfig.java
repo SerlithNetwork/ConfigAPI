@@ -139,7 +139,8 @@ public abstract class StaticConfig {
             relocate();
 
             // If fields are empty, perform the initialization.
-            if (fields.isEmpty()) {
+            if (sections.isEmpty()) {
+                sections.put("", new LinkedHashSet<>());
                 initialize(getClass(), "");
             }
 
