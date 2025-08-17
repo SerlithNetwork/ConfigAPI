@@ -19,6 +19,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -226,6 +227,8 @@ public abstract class StaticConfig {
      * @param initialize If this is the initialization phase.
      */
     private void step(Class<?> parent, String path, boolean initialize) throws ReflectiveOperationException {
+        Map<Integer, List<Pair<String, AnnotatedElement>>> members = new TreeMap<>();
+
         for (Field field : parent.getDeclaredFields()) {
             // Skip field if its modifiers are invalid, or it is marked @Ignore.
             if (!Modifier.isStatic(field.getModifiers()) || field.isAnnotationPresent(Ignore.class)) {
@@ -248,20 +251,8 @@ public abstract class StaticConfig {
                 continue;
             }
 
-            boolean hidden = field.isAnnotationPresent(Hidden.class);
-            boolean present = document.contains(route);
-
-            // If this is the initial saving of the value in the document,
-            // or the field is final, so we have to override the value anyway.
-            boolean initial = (!present || Modifier.isFinal(field.getModifiers())) && !hidden;
-
-            // Set the field value in the configuration document.
-            if (initial || (!hidden || present)) {
-                set(route, field, field.get(null));
-            }
-
-            // Set the associated comment for the route's block if present.
-            document.setComment(document.getBlock(route), field.getAnnotation(Comment.class));
+            // Add the field to the member priority map.
+            members.computeIfAbsent(getPriority(field), key -> new ArrayList<>()).add(new Pair<>(route, field));
         }
 
         Class<?>[] classes = parent.getDeclaredClasses();
@@ -291,22 +282,56 @@ public abstract class StaticConfig {
                 continue;
             }
 
-            // If the class is final, remove it so it is regenerated with default values.
-            if (Modifier.isFinal(clazz.getModifiers())) {
-                document.remove(route);
-            }
+            // Add the class to the member priority map.
+            members.computeIfAbsent(getPriority(clazz), key -> new ArrayList<>()).add(new Pair<>(route, clazz));
+        }
 
-            Section section = document.getSection(route);
+        for (List<Pair<String, AnnotatedElement>> priority : members.values()) {
+            for (Pair<String, AnnotatedElement> member : priority) {
+                String route = member.getLeft();
 
-            // If the section doesn't exist and is not hidden, create it.
-            if (section == null && !clazz.isAnnotationPresent(Hidden.class)) {
-                section = document.createSection(route);
-            }
+                if (member.getRight() instanceof Field) {
+                    Field field = (Field) member.getRight();
 
-            // If the section exists, and we shouldn't skip, set the comment and recurse.
-            if (section != null) {
-                document.setComment(section, clazz.getAnnotation(Comment.class));
-                step(clazz, route + ".", false);
+                    boolean hidden = field.isAnnotationPresent(Hidden.class);
+                    boolean present = document.contains(route);
+
+                    // If this is the initial saving of the value in the document,
+                    // or the field is final, so we have to override the value anyway.
+                    boolean initial = (!present || Modifier.isFinal(field.getModifiers())) && !hidden;
+
+                    // Set the field value in the configuration document.
+                    if (initial || (!hidden || present)) {
+                        set(route, field, field.get(null));
+                    }
+
+                    // Set the associated comment for the route's block if present.
+                    document.setComment(document.getBlock(route), field.getAnnotation(Comment.class));
+
+                    continue;
+                }
+
+                if (member.getRight() instanceof Class) {
+                    Class<?> clazz = (Class<?>) member.getRight();
+
+                    // If the class is final, remove it so it is regenerated with default values.
+                    if (Modifier.isFinal(clazz.getModifiers())) {
+                        document.remove(route);
+                    }
+
+                    Section section = document.getSection(route);
+
+                    // If the section doesn't exist and is not hidden, create it.
+                    if (section == null && !clazz.isAnnotationPresent(Hidden.class)) {
+                        section = document.createSection(route);
+                    }
+
+                    // If the section exists, and we shouldn't skip, set the comment and recurse.
+                    if (section != null) {
+                        document.setComment(section, clazz.getAnnotation(Comment.class));
+                        step(clazz, route + ".", false);
+                    }
+                }
             }
         }
     }
@@ -469,6 +494,17 @@ public abstract class StaticConfig {
     }
 
     /**
+     * Gets the priority for a class member.
+     *
+     * @param member The member.
+     * @return The priority.
+     */
+    private int getPriority(AnnotatedElement member) {
+        Priority annotation = member.getAnnotation(Priority.class);
+        return annotation != null ? annotation.value() : Integer.MAX_VALUE;
+    }
+
+    /**
      * Changes the yaml key to the specified value.
      */
     @Retention(RetentionPolicy.RUNTIME)
@@ -519,5 +555,11 @@ public abstract class StaticConfig {
     @Target({ElementType.TYPE})
     public @interface Footer {
         String[] value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface Priority {
+        int value();
     }
 }
