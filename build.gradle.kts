@@ -44,6 +44,11 @@ subprojects {
             into(Path(rootDir.path, "jars"))
         }
 
+        shadowJar {
+            exclude("org/jetbrains/**")
+            exclude("org/intellij/**")
+        }
+
         build { dependsOn(named("copy")) }
     }
 
