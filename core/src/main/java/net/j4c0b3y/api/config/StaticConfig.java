@@ -49,16 +49,16 @@ public abstract class StaticConfig {
     private final ConfigDocument document;
 
     /**
-     * Maps all config routes to their associated fields.
+     * Maps all config field routes to their associated fields.
      */
     @Getter(AccessLevel.NONE)
     private final Map<String, Field> fields = new HashMap<>();
 
     /**
-     * A list of all routes mapped to if they can't be removed.
+     * Maps all config class routes to a set of their members.
      */
     @Getter(AccessLevel.NONE)
-    private final Map<String, Boolean> routes = new HashMap<>();
+    private final Map<String, Set<AnnotatedElement>> sections = new HashMap<>();
 
     /**
      * A map of relocation replacements to their target paths.
@@ -102,6 +102,7 @@ public abstract class StaticConfig {
      * @param file The file to be used for the configuration document.
      * @param handler The config handler to use for config settings.
      */
+    @SuppressWarnings("unused")
     public StaticConfig(File file, ConfigHandler handler) {
         this(file, null, handler);
     }
@@ -139,7 +140,7 @@ public abstract class StaticConfig {
 
             // If fields are empty, perform the initialization.
             if (fields.isEmpty()) {
-                step(getClass(), "", true);
+                initialize(getClass(), "");
             }
 
             // Load and set each field value from the document.
@@ -207,7 +208,7 @@ public abstract class StaticConfig {
             document.wipeComments(document);
 
             // Recurse through the static fields, setting the values in the document.
-            step(getClass(), "", false);
+            step("");
 
             // Set the additional custom comments specified by the user.
             setComments();
@@ -219,15 +220,8 @@ public abstract class StaticConfig {
         }
     }
 
-    /**
-     * Recursively steps through each configuration section.
-     *
-     * @param parent The parent class of the section.
-     * @param path The current path.
-     * @param initialize If this is the initialization phase.
-     */
-    private void step(Class<?> parent, String path, boolean initialize) throws ReflectiveOperationException {
-        Map<Integer, List<Pair<String, AnnotatedElement>>> members = new TreeMap<>();
+    private void initialize(Class<?> parent, String path) {
+        Map<Integer, Set<AnnotatedElement>> priorities = new TreeMap<>();
 
         for (Field field : parent.getDeclaredFields()) {
             // Skip field if its modifiers are invalid, or it is marked @Ignore.
@@ -242,17 +236,12 @@ public abstract class StaticConfig {
             field.setAccessible(true);
 
             // Get the route by combining the current path and the formatted key.
-            String route = path + getRoute(field.getAnnotation(Key.class), field.getName());
+            String route = getRoute(field, path);
 
-            // Add the fields and routes if we are in the initialization phase.
-            if (initialize) {
-                routes.put(route, true);
-                fields.put(route, field);
-                continue;
-            }
+            // Add the field to the field map.
+            fields.put(route, field);
 
-            // Add the field to the member priority map.
-            members.computeIfAbsent(getPriority(field), key -> new ArrayList<>()).add(new Pair<>(route, field));
+            priorities.computeIfAbsent(getPriority(field), key -> new LinkedHashSet<>()).add(field);
         }
 
         Class<?>[] classes = parent.getDeclaredClasses();
@@ -273,64 +262,65 @@ public abstract class StaticConfig {
             }
 
             // Get the route by combining the current path and the formatted key.
-            String route = path + getRoute(clazz.getAnnotation(Key.class), clazz.getSimpleName());
+            String route = getRoute(clazz, path);
 
-            // Add the routes and recurse if we are in the initialization phase.
-            if (initialize) {
-                routes.put(route, false);
-                step(clazz, route + ".", true);
+            // Initialize the child class.
+            initialize(clazz, route);
+
+            priorities.computeIfAbsent(getPriority(clazz), key -> new LinkedHashSet<>()).add(clazz);
+        }
+
+        for (Set<AnnotatedElement> members : priorities.values()) {
+            this.sections.computeIfAbsent(path, key -> new LinkedHashSet<>()).addAll(members);
+        }
+    }
+
+    /**
+     * Recursively steps through each configuration section.
+     *
+     * @param path The current path.
+     */
+    private void step(String path) throws ReflectiveOperationException {
+        for (AnnotatedElement member : sections.get(path)) {
+            String route = getRoute(member, path);
+
+            if (member instanceof Field) {
+                Field field = (Field) member;
+
+                boolean hidden = field.isAnnotationPresent(Hidden.class);
+                boolean present = document.contains(route);
+
+                // If this is the initial saving of the value in the document,
+                // or the field is final, so we have to override the value anyway.
+                boolean initial = (!present || Modifier.isFinal(field.getModifiers())) && !hidden;
+
+                // Set the field value in the configuration document.
+                if (initial || (!hidden || present)) {
+                    set(route, field, field.get(null));
+                }
+
+                // Set the associated comment for the route's block if present.
+                document.setComment(document.getBlock(route), field.getAnnotation(Comment.class));
                 continue;
             }
 
-            // Add the class to the member priority map.
-            members.computeIfAbsent(getPriority(clazz), key -> new ArrayList<>()).add(new Pair<>(route, clazz));
-        }
-
-        for (List<Pair<String, AnnotatedElement>> priority : members.values()) {
-            for (Pair<String, AnnotatedElement> member : priority) {
-                String route = member.getLeft();
-
-                if (member.getRight() instanceof Field) {
-                    Field field = (Field) member.getRight();
-
-                    boolean hidden = field.isAnnotationPresent(Hidden.class);
-                    boolean present = document.contains(route);
-
-                    // If this is the initial saving of the value in the document,
-                    // or the field is final, so we have to override the value anyway.
-                    boolean initial = (!present || Modifier.isFinal(field.getModifiers())) && !hidden;
-
-                    // Set the field value in the configuration document.
-                    if (initial || (!hidden || present)) {
-                        set(route, field, field.get(null));
-                    }
-
-                    // Set the associated comment for the route's block if present.
-                    document.setComment(document.getBlock(route), field.getAnnotation(Comment.class));
-
-                    continue;
+            if (member instanceof Class) {
+                // If the class is final, remove it so it is regenerated with default values.
+                if (Modifier.isFinal(((Class<?>) member).getModifiers())) {
+                    document.remove(route);
                 }
 
-                if (member.getRight() instanceof Class) {
-                    Class<?> clazz = (Class<?>) member.getRight();
+                Section section = document.getSection(route);
 
-                    // If the class is final, remove it so it is regenerated with default values.
-                    if (Modifier.isFinal(clazz.getModifiers())) {
-                        document.remove(route);
-                    }
+                // If the section doesn't exist and is not hidden, create it.
+                if (section == null && !member.isAnnotationPresent(Hidden.class)) {
+                    section = document.createSection(route);
+                }
 
-                    Section section = document.getSection(route);
-
-                    // If the section doesn't exist and is not hidden, create it.
-                    if (section == null && !clazz.isAnnotationPresent(Hidden.class)) {
-                        section = document.createSection(route);
-                    }
-
-                    // If the section exists, and we shouldn't skip, set the comment and recurse.
-                    if (section != null) {
-                        document.setComment(section, clazz.getAnnotation(Comment.class));
-                        step(clazz, route + ".", false);
-                    }
+                // If the section exists, and we shouldn't skip, set the comment and recurse.
+                if (section != null) {
+                    document.setComment(section, member.getAnnotation(Comment.class));
+                    step(route);
                 }
             }
         }
@@ -347,11 +337,11 @@ public abstract class StaticConfig {
 
                 // If there is no field for the route,
                 // but the route is present in the file.
-                if (!fields.containsKey(route) && !routes.containsKey(route)) {
+                if (!fields.containsKey(route) && !sections.containsKey(route)) {
 
                     // If the route starts with any manual paths,
                     // prevent it from being flagged for removal.
-                    if (routes.entrySet().stream().anyMatch(entry -> entry.getValue() && route.startsWith(entry.getKey()))) {
+                    if (fields.keySet().stream().anyMatch(route::startsWith)) {
                         continue;
                     }
 
@@ -402,6 +392,7 @@ public abstract class StaticConfig {
      * @param target The old location.
      * @param replacement The new location.
      */
+    @SuppressWarnings("unused")
     protected void relocate(String target, String replacement) {
         relocations.computeIfAbsent(replacement, key -> new ArrayList<>()).add(target);
     }
@@ -437,6 +428,7 @@ public abstract class StaticConfig {
      * @param side If the comment is on the side.
      * @param comment The comment.
      */
+    @SuppressWarnings("SameParameterValue")
     protected void setComment(String route, boolean side, String ...comment) {
         comments.put(route, new Pair<>(Arrays.asList(comment), side));
     }
@@ -447,6 +439,7 @@ public abstract class StaticConfig {
      * @param route The route.
      * @param comment The comment.
      */
+    @SuppressWarnings("unused")
     protected void setComment(String route, String ...comment) {
         setComment(route, false, comment);
     }
@@ -481,16 +474,20 @@ public abstract class StaticConfig {
     }
 
     /**
-     * If the key annotation is present, uses that value.
-     * Otherwise, uses the member name with the key formatter.
+     * Gets the route of a field/class and appends it to the path.
      *
-     * @param key The key annotation.
-     * @param name The name of the member.
+     * @param member The member key annotation.
+     * @param path The current path.
      * @return The formatted key.
      */
-    private String getRoute(Key key, String name) {
+    private String getRoute(AnnotatedElement member, String path) {
+        Key key = member.getAnnotation(Key.class);
+        String name = ClassUtils.getName(member);
+
         boolean valid = key != null && !key.value().trim().isEmpty();
-        return valid ? key.value() : handler.getKeyFormatter().apply(name);
+        String route = valid ? key.value() : handler.getKeyFormatter().apply(name);
+
+        return path + (path.isEmpty() ? "" : ".") + route;
     }
 
     /**
@@ -540,10 +537,19 @@ public abstract class StaticConfig {
     }
 
     /**
+     * Sets the priority (order) of the entry in the document.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface Priority {
+        int value();
+    }
+
+    /**
      * Adds a header comment to the top of the config document.
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.TYPE})
+    @Target(ElementType.TYPE)
     public @interface Header {
         String[] value();
     }
@@ -552,14 +558,8 @@ public abstract class StaticConfig {
      * Adds a footer comment to the bottom of the config document.
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.TYPE})
+    @Target(ElementType.TYPE)
     public @interface Footer {
         String[] value();
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.TYPE, ElementType.FIELD})
-    public @interface Priority {
-        int value();
     }
 }
