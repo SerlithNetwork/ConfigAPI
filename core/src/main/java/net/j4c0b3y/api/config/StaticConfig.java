@@ -302,6 +302,12 @@ public abstract class StaticConfig {
 
                 // Set the associated comment for the route's block if present.
                 document.setComment(document.getBlock(route), field.getAnnotation(Comment.class));
+
+                // Ensure position is forced when structure formatting is enabled.
+                if (handler.isFormatStructure()) {
+                    document.move(route, route);
+                }
+
                 continue;
             }
 
@@ -321,6 +327,12 @@ public abstract class StaticConfig {
                 // If the section exists, and we shouldn't skip, set the comment and recurse.
                 if (section != null) {
                     document.setComment(section, member.getAnnotation(Comment.class));
+
+                    // Ensure position is forced when structure formatting is enabled.
+                    if (handler.isFormatStructure()) {
+                        document.move(route, route);
+                    }
+
                     step(route);
                 }
             }
