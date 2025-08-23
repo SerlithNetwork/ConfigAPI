@@ -110,13 +110,10 @@ all fields in your class will be loaded and saved to the yaml document.
 
 - The file specified in the constructor should be in the plugin's data folder, else it will appear in the main server directory.
 
-- You can optionally set the defaults for the plugin by using `getResource`, this shouldn't be used by most people unless you are directly accessing values.
-
 ```java 
 public Settings(ExamplePlugin plugin) {
     super(
-        new File(plugin.getDataFolder(), "settings.yml"), // Point 1 (Required)
-        plugin.getResource("settings.yml"), // Point 2 (Optional)
+        new File(plugin.getDataFolder(), "settings.yml"),
         plugin.getConfigHandler()
     );
 }
