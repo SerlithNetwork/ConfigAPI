@@ -18,6 +18,7 @@ Flexible and robust static access configuration api.
 - Annotation based field modifiers
 - Automatic header and footer comments
 - User friendly message utility class
+- Supports kotlin's static classes
 - Small and lightweight (~500kb)
 
 ## Support
