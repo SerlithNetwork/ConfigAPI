@@ -292,6 +292,26 @@ override: true
 # OVERRIDE is set to true.
 ```
 
+#### @Priority
+
+Used to set the position / order of a node instead of 
+using the position of the static member in the class.
+
+Nodes have a priority of `Integer.MAX_VALUE` by default.
+
+```java
+@Priority(2)
+public static int EXAMPLE = 3;
+
+@Priority(1)
+public static class TEST { }
+```
+
+```yaml
+test: {}
+example: 3
+```
+
 #### @Header & @Footer
 
 - @Header is used to add a header comment to the top of a config document.
@@ -413,7 +433,7 @@ For more information about resolvers, please refer to the internal javadocs.
 ### Limitations
 
 Due to the way that class members are retrieved in java, fields are always above
-subclasses meaning the following is not possible.
+subclasses meaning the following is not possible without using @Priority.
 
 <details>
 <summary>Expand</summary>
