@@ -6,6 +6,7 @@ import net.j4c0b3y.api.config.ConfigHandler;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,13 +32,11 @@ public class MapProvider<E, T extends Map<String, E>> implements TypeProvider<T>
 
     @Override
     @SuppressWarnings("unchecked")
-    public T load(LoadContext context) {
+    public @NotNull T load(@NotNull LoadContext context) {
         // Throw if the map is not a section instance.
-        if (!(context.getObject() instanceof Section)) {
+        if (!(context.getObject() instanceof Section section)) {
             throw new IllegalArgumentException("Mapped route must resolve to section.");
         }
-
-        Section section = (Section) context.getObject();
 
         // An ordered map for our deserialized generic entries.
         Map<String, E> entries = new LinkedHashMap<>();
@@ -54,7 +53,7 @@ public class MapProvider<E, T extends Map<String, E>> implements TypeProvider<T>
     }
 
     @Override
-    public Object save(SaveContext<T> saveContext) {
+    public @NotNull Object save(@NotNull SaveContext<T> saveContext) {
         // An ordered map for our serialized yaml object entries.
         Map<String, Object> entries = new LinkedHashMap<>();
         TypeProvider<E> provider = handler.provide(generic);

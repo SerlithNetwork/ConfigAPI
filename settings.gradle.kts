@@ -1,2 +1,2 @@
 rootProject.name = "ConfigAPI"
-include("core", "bukkit")
+include("core", "paper")

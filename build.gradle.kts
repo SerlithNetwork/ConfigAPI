@@ -5,6 +5,7 @@ import kotlin.io.path.Path
 plugins {
     java
     `maven-publish`
+    `java-library`
     id("io.freefair.lombok") version "8.12.1"
     id("com.gradleup.shadow") version "9.0.0-beta8"
 }
@@ -23,14 +24,24 @@ allprojects {
 
 subprojects {
     apply(plugin = "java")
+    apply(plugin = "java-library")
     apply(plugin = "io.freefair.lombok")
     apply(plugin = "maven-publish")
     apply(plugin = "com.gradleup.shadow")
 
-    java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-        withSourcesJar()
+
+    if (project.name == "paper") {
+        java {
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
+            withSourcesJar()
+        }
+    } else {
+        java {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+            withSourcesJar()
+        }
     }
 
     tasks {

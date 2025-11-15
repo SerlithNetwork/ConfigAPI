@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Used for providing enum values.
@@ -20,13 +21,13 @@ public class EnumProvider<T extends Enum<T>> implements TypeProvider<T> {
     private final Class<T> type;
 
     @Override
-    public T load(LoadContext context) {
+    public @NotNull T load(@NotNull LoadContext context) {
         // Load using the context string, transformed to upper case.
         return Enum.valueOf(type, String.valueOf(context.getObject()).toUpperCase());
     }
 
     @Override
-    public Object save(SaveContext<T> context) {
+    public @NotNull Object save(@NotNull SaveContext<T> context) {
         // Save using the enum name.
         return context.getObject().name();
     }

@@ -1,4 +1,7 @@
+plugins {
+    `java-library`
+}
 
 dependencies {
-    implementation("dev.dejvokep:boosted-yaml:1.3.7")
+    api("dev.dejvokep:boosted-yaml:1.3.7")
 }

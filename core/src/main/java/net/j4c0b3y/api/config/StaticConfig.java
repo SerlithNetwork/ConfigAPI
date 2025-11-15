@@ -11,6 +11,8 @@ import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
 import net.j4c0b3y.api.config.utils.ClassUtils;
 import net.j4c0b3y.api.config.utils.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -83,7 +86,7 @@ public abstract class StaticConfig {
      * @param defaults The optional default resource to be loaded from.
      * @param handler The config handler to use for config settings.
      */
-    public StaticConfig(File file, InputStream defaults, ConfigHandler handler) {
+    public StaticConfig(@NotNull File file, @Nullable InputStream defaults, @NotNull ConfigHandler handler) {
         this.file = file;
         this.handler = handler;
 
@@ -103,8 +106,30 @@ public abstract class StaticConfig {
      * @param handler The config handler to use for config settings.
      */
     @SuppressWarnings("unused")
-    public StaticConfig(File file, ConfigHandler handler) {
+    public StaticConfig(@NotNull File file, @NotNull ConfigHandler handler) {
         this(file, null, handler);
+    }
+
+    /**
+     * Creates a new static config, registers it to the config handler.
+     *
+     * @param path The path reference to the file to be used for the configuration document.
+     * @param defaults The optional default resource to be loaded from.
+     * @param handler The config handler to use for config settings.
+     */
+    public StaticConfig(@NotNull Path path, @Nullable InputStream defaults, @NotNull ConfigHandler handler) {
+        this(path.toFile(), defaults, handler);
+    }
+
+    /**
+     * Creates a new static config, registers it to the config handler.
+     *
+     * @param path The path reference to the file to be used for the configuration document.
+     * @param handler The config handler to use for config settings.
+     */
+    @SuppressWarnings("unused")
+    public StaticConfig(@NotNull Path path, @NotNull ConfigHandler handler) {
+        this(path.toFile(), null, handler);
     }
 
     /**
@@ -127,6 +152,13 @@ public abstract class StaticConfig {
         return Arrays.asList(footer.value());
     }
 
+    public final void initialize() {
+        this.load();
+        this.save();
+    }
+
+    public void afterLoad() {}
+
     /**
      * Creates, relocates and loads the document keys into the static fields.
      */
@@ -136,12 +168,12 @@ public abstract class StaticConfig {
             document.reload();
 
             // Perform all registered value relocations.
-            relocate();
+            this.relocate();
 
             // If fields are empty, perform the initialization.
             if (sections.isEmpty()) {
                 sections.put("", new LinkedHashSet<>());
-                initialize(getClass(), "");
+                this.initialize(getClass(), "");
             }
 
             // Load and set each field value from the document.
@@ -167,13 +199,6 @@ public abstract class StaticConfig {
                 }
             }
 
-            // Save the field values to the config document.
-            save();
-
-            // If configured, we should format values.
-            if (handler.isFormatValues()) {
-                format();
-            }
         } catch (Exception exception) {
             // Load was unsuccessful, prevent saving.
             success = false;
@@ -182,6 +207,8 @@ public abstract class StaticConfig {
 
         // Load was successful, allow saving.
         success = true;
+
+        this.afterLoad();
     }
 
     /**
@@ -209,10 +236,15 @@ public abstract class StaticConfig {
             document.wipeComments(document);
 
             // Recurse through the static fields, setting the values in the document.
-            step("");
+            this.step("");
 
             // Set the additional custom comments specified by the user.
-            setComments();
+            this.setComments();
+
+            // If configured, we should format values.
+            if (handler.isFormatValues()) {
+                this.format();
+            }
 
             // Save the document values and comments to file.
             document.save();
@@ -285,8 +317,7 @@ public abstract class StaticConfig {
         for (AnnotatedElement member : sections.get(path)) {
             String route = getRoute(member, path);
 
-            if (member instanceof Field) {
-                Field field = (Field) member;
+            if (member instanceof Field field) {
 
                 boolean hidden = field.isAnnotationPresent(Hidden.class);
                 boolean present = document.contains(route);
@@ -329,8 +360,9 @@ public abstract class StaticConfig {
 
     /**
      * Formats the values in the config file.
+     * This does not save the document
      */
-    public void format() throws IOException {
+    protected void format() throws IOException {
         try {
             boolean removed = false;
 
@@ -380,8 +412,6 @@ public abstract class StaticConfig {
                 );
             }
 
-            // Save the formatted values to file.
-            document.save();
         } catch (Exception exception) {
             throw new IOException("Format failed for file '" + file.getName() + "'.", exception);
         }
