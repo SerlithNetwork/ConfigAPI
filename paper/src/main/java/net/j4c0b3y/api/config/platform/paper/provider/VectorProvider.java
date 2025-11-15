@@ -31,7 +31,7 @@ public class VectorProvider implements TypeProvider<Vector> {
 
             return new Vector(x, y, z);
         }
-        throw new IllegalStateException("Vector format not valid");
+        throw new IllegalStateException("Failed to parse Vector");
     }
 
     @Nullable

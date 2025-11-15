@@ -5,7 +5,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":core"))
-    implementation(project(":adventure"))
-
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly("net.kyori:adventure-api:4.25.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.25.0")
 }

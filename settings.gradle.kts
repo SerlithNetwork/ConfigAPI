@@ -1,2 +1,2 @@
 rootProject.name = "ConfigAPI"
-include("core", "paper")
+include("core", "adventure", "paper")

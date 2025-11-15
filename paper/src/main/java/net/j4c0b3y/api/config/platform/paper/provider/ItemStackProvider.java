@@ -104,7 +104,7 @@ public class ItemStackProvider implements TypeProvider<ItemStack> {
 
             return result.ensureServerConversions(); // Paper
         }
-        throw new IllegalStateException("Failed to load ItemStack");
+        throw new IllegalStateException("Failed to parse ItemStack");
     }
 
     @Nullable

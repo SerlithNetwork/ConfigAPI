@@ -15,7 +15,7 @@ public class WorldProvider implements TypeProvider<WorldReference> {
         if (context.getObject() instanceof String) {
             return new WorldReference((String) context.getObject());
         }
-        throw new IllegalArgumentException("Cannot serialize world entry");
+        throw new IllegalArgumentException("Failed to parse world");
     }
 
     @Nullable

@@ -26,7 +26,7 @@ public class LocationProvider implements TypeProvider<Location> {
             }
             return new Location(world, (double) map.get("x"), (double) map.get("y"), (double) map.get("z"), (float) map.get("yaw"), (float) map.get("pitch"));
         }
-        throw new IllegalStateException("Location format not valid");
+        throw new IllegalStateException("Failed to parse Location");
     }
 
     @NotNull

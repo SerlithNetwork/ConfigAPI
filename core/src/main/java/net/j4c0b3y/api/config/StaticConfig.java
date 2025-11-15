@@ -152,11 +152,6 @@ public abstract class StaticConfig {
         return Arrays.asList(footer.value());
     }
 
-    public final void initialize() {
-        this.load();
-        this.save();
-    }
-
     public void afterLoad() {}
 
     /**
@@ -197,6 +192,14 @@ public abstract class StaticConfig {
                 } catch (Exception exception) {
                     throw new IOException("Failed to load key '" + route + "'.", exception);
                 }
+            }
+
+            // Save the field values to the config document.
+            save();
+
+            // If configured, we should format values.
+            if (handler.isFormatValues()) {
+                format();
             }
 
         } catch (Exception exception) {
@@ -240,11 +243,6 @@ public abstract class StaticConfig {
 
             // Set the additional custom comments specified by the user.
             this.setComments();
-
-            // If configured, we should format values.
-            if (handler.isFormatValues()) {
-                this.format();
-            }
 
             // Save the document values and comments to file.
             document.save();
@@ -424,6 +422,8 @@ public abstract class StaticConfig {
                 );
             }
 
+            // Save the formatted values to file.
+            document.save();
         } catch (Exception exception) {
             throw new IOException("Format failed for file '" + file.getName() + "'.", exception);
         }
