@@ -5,7 +5,6 @@ import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
 public class PrefixedComponentProvider implements TypeProvider<PrefixedComponent> {
@@ -20,7 +19,7 @@ public class PrefixedComponentProvider implements TypeProvider<PrefixedComponent
     @Override
     public PrefixedComponent load(@NotNull LoadContext context) {
         if (context.getObject() instanceof String string) {
-            return new PrefixedComponent(this.prefix, MiniMessage.miniMessage().deserialize(string));
+            return new PrefixedComponent(this.prefix, string);
         }
         throw new IllegalStateException();
     }
@@ -28,7 +27,7 @@ public class PrefixedComponentProvider implements TypeProvider<PrefixedComponent
     @NotNull
     @Override
     public Object save(@NotNull SaveContext<PrefixedComponent> context) {
-        return MiniMessage.miniMessage().serialize(context.getObject().getRaw());
+        return context.getObject().getRaw();
     }
 
 }

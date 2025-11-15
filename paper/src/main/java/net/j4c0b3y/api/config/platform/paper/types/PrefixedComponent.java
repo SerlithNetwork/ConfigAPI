@@ -2,6 +2,7 @@ package net.j4c0b3y.api.config.platform.paper.types;
 
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class PrefixedComponent {
 
@@ -9,11 +10,15 @@ public class PrefixedComponent {
     private final Component component;
 
     @Getter
-    private final Component raw;
+    private final Component unprefixed;
 
-    public PrefixedComponent(Component prefix, Component component) {
-        this.component = prefix.append(component);
-        this.raw = component;
+    @Getter
+    private final String raw;
+
+    public PrefixedComponent(Component prefix, String raw) {
+        this.raw = raw;
+        this.unprefixed = MiniMessage.miniMessage().deserialize(raw);
+        this.component = prefix.append(this.unprefixed);
     }
 
 }
