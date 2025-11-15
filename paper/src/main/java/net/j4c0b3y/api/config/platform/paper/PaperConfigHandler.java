@@ -5,7 +5,10 @@ import net.j4c0b3y.api.config.platform.paper.provider.*;
 import net.j4c0b3y.api.config.platform.paper.types.WorldReference;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.logging.Logger;
@@ -32,6 +35,9 @@ public class PaperConfigHandler extends AdventureConfigHandler {
 
         this.bind(ItemStack.class, new ItemStackProvider());
         this.bind(Location.class, new LocationProvider());
+        this.bind(PotionEffectType.class, new PotionEffectTypeProvider());
+        this.bind(PotionEffect.class, new PotionEffectProvider());
+        this.bind(Sound.class, new SoundProvider());
         this.bind(Vector.class, new VectorProvider());
         this.bind(WorldReference.class, new WorldProvider());
     }
