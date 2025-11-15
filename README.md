@@ -18,6 +18,7 @@ Flexible and robust static access configuration api.
 - Annotation based field modifiers
 - Automatic header and footer comments
 - User friendly message utility class
+- Supports kotlin's static classes
 - Small and lightweight (~500kb)
 
 ## Support
@@ -110,13 +111,10 @@ all fields in your class will be loaded and saved to the yaml document.
 
 - The file specified in the constructor should be in the plugin's data folder, else it will appear in the main server directory.
 
-- You can optionally set the defaults for the plugin by using `getResource`, this shouldn't be used by most people unless you are directly accessing values.
-
 ```java 
 public Settings(ExamplePlugin plugin) {
     super(
-        new File(plugin.getDataFolder(), "settings.yml"), // Point 1 (Required)
-        plugin.getResource("settings.yml"), // Point 2 (Optional)
+        new File(plugin.getDataFolder(), "settings.yml"),
         plugin.getConfigHandler()
     );
 }
@@ -292,6 +290,26 @@ override: true
 # OVERRIDE is set to true.
 ```
 
+#### @Priority
+
+Used to set the position / order of a node instead of 
+using the position of the static member in the class.
+
+Nodes have a priority of `Integer.MAX_VALUE` by default.
+
+```java
+@Priority(2)
+public static int EXAMPLE = 3;
+
+@Priority(1)
+public static class TEST { }
+```
+
+```yaml
+test: {}
+example: 3
+```
+
 #### @Header & @Footer
 
 - @Header is used to add a header comment to the top of a config document.
@@ -413,7 +431,7 @@ For more information about resolvers, please refer to the internal javadocs.
 ### Limitations
 
 Due to the way that class members are retrieved in java, fields are always above
-subclasses meaning the following is not possible.
+subclasses meaning the following is not possible without using @Priority.
 
 <details>
 <summary>Expand</summary>
