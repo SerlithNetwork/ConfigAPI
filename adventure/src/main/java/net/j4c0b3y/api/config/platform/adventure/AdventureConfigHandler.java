@@ -1,5 +1,6 @@
 package net.j4c0b3y.api.config.platform.adventure;
 
+import lombok.Getter;
 import net.j4c0b3y.api.config.ConfigHandler;
 import net.j4c0b3y.api.config.platform.adventure.provider.MiniMessageProvider;
 import net.j4c0b3y.api.config.platform.adventure.provider.PrefixedComponentProvider;
@@ -20,6 +21,9 @@ import java.util.logging.Logger;
  */
 public class AdventureConfigHandler extends ConfigHandler {
 
+    @Getter
+    private static Component prefix;
+
     /**
      * Creates a new config handler instance,
      * registers default resolvers and providers.
@@ -29,8 +33,9 @@ public class AdventureConfigHandler extends ConfigHandler {
     public AdventureConfigHandler(Logger logger, Component prefix) {
         super(logger);
 
+        AdventureConfigHandler.prefix = prefix;
         this.bind(MiniComponent.class, new MiniMessageProvider());
-        this.bind(PrefixedComponent.class, new PrefixedComponentProvider(prefix));
+        this.bind(PrefixedComponent.class, new PrefixedComponentProvider());
     }
 
     /**
