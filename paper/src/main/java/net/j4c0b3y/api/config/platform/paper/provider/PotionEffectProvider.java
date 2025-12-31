@@ -34,14 +34,14 @@ public class PotionEffectProvider implements TypeProvider<PotionEffect> {
                     (boolean) map.get("has-icon")
             );
         }
-        throw new IllegalStateException("Failed to parse PotionEffect");
+        throw new IllegalStateException("Failed to parse PotionEffect: " + context.getObject().getClass().getName());
     }
 
     @Nullable
     @Override
     public Object save(@NotNull SaveContext<PotionEffect> context) {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("effect", context.getObject().getType());
+        map.put("effect", context.getObject().getType().getKey().asString());
         map.put("duration", context.getObject().getDuration());
         map.put("amplifier", context.getObject().getAmplifier());
         map.put("ambient", context.getObject().isAmbient());

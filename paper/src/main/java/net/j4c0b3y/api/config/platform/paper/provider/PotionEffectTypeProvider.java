@@ -25,7 +25,7 @@ public class PotionEffectTypeProvider implements TypeProvider<PotionEffectType> 
             }
             return effect;
         }
-        throw new IllegalStateException("Failed to parse PotionEffectType");
+        throw new IllegalStateException("Failed to parse PotionEffectType: " + context.getObject().getClass().getName());
     }
 
     @Nullable

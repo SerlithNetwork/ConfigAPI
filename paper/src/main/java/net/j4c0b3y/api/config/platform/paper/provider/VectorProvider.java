@@ -31,7 +31,7 @@ public class VectorProvider implements TypeProvider<Vector> {
 
             return new Vector(x, y, z);
         }
-        throw new IllegalStateException("Failed to parse Vector");
+        throw new IllegalStateException("Failed to parse Vector: " + context.getObject().getClass().getName());
     }
 
     @Nullable

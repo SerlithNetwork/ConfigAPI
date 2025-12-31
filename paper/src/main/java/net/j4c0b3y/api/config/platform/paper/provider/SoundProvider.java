@@ -25,7 +25,7 @@ public class SoundProvider implements TypeProvider<Sound> {
             }
             return sound;
         }
-        throw new IllegalStateException("Failed to parse Sound");
+        throw new IllegalStateException("Failed to parse Sound: " + context.getObject().getClass().getName());
     }
 
     @Nullable
