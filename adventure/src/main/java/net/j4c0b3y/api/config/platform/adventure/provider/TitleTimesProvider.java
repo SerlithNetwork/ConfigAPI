@@ -14,7 +14,7 @@ public class TitleTimesProvider implements TypeProvider<TitleTimes> {
 
     @Override
     public @NonNull TitleTimes load(@NonNull LoadContext context) {
-        if (context instanceof Map<?,?> map) {
+        if (context.getObject() instanceof Map<?,?> map) {
             return new TitleTimes(
                     (long) map.get("fade-in"),
                     (long) map.get("stay"),

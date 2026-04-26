@@ -14,7 +14,7 @@ public class TitleComponentProvider implements TypeProvider<TitleComponent> {
 
     @Override
     public @NonNull TitleComponent load(@NonNull LoadContext context) {
-        if (context instanceof Map<?,?> map) {
+        if (context.getObject() instanceof Map<?,?> map) {
             Map<?, ?> duration = (Map<?, ?>) map.get("duration");
             return new TitleComponent(
                     (String) map.get("title"),

@@ -19,7 +19,7 @@ public class PrefixedComponent {
         this.component = AdventureConfigHandler.getPrefix().appendSpace().append(this.unprefixed);
     }
 
-    public Component resolveUnprefixed(TagResolver...tagResolvers) {
+    public Component resolveUnprefixed(TagResolver ...tagResolvers) {
         return MiniMessage.miniMessage().deserialize(this.raw, tagResolvers);
     }
 

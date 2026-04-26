@@ -2,14 +2,8 @@ package net.j4c0b3y.api.config.platform.adventure;
 
 import lombok.Getter;
 import net.j4c0b3y.api.config.ConfigHandler;
-import net.j4c0b3y.api.config.platform.adventure.provider.MiniMessageProvider;
-import net.j4c0b3y.api.config.platform.adventure.provider.PrefixedComponentProvider;
-import net.j4c0b3y.api.config.platform.adventure.provider.TitleComponentProvider;
-import net.j4c0b3y.api.config.platform.adventure.provider.TitleTimesProvider;
-import net.j4c0b3y.api.config.platform.adventure.types.MiniComponent;
-import net.j4c0b3y.api.config.platform.adventure.types.PrefixedComponent;
-import net.j4c0b3y.api.config.platform.adventure.types.TitleComponent;
-import net.j4c0b3y.api.config.platform.adventure.types.TitleTimes;
+import net.j4c0b3y.api.config.platform.adventure.provider.*;
+import net.j4c0b3y.api.config.platform.adventure.types.*;
 import net.kyori.adventure.text.Component;
 
 import java.util.logging.Logger;
@@ -42,6 +36,7 @@ public class AdventureConfigHandler extends ConfigHandler {
         this.bind(PrefixedComponent.class, new PrefixedComponentProvider());
         this.bind(TitleTimes.class, new TitleTimesProvider());
         this.bind(TitleComponent.class, new TitleComponentProvider());
+        this.bind(BannerComponent.class, new BannerComponentProvider());
     }
 
     /**
