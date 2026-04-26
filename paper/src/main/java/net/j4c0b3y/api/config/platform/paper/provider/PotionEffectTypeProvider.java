@@ -6,14 +6,14 @@ import net.j4c0b3y.api.config.provider.context.SaveContext;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class PotionEffectTypeProvider implements TypeProvider<PotionEffectType> {
 
-    @NotNull
+    @NonNull
     @Override
-    public PotionEffectType load(@NotNull LoadContext context) {
+    public PotionEffectType load(@NonNull LoadContext context) {
         if (context.getObject() instanceof String string) {
             NamespacedKey key = NamespacedKey.fromString(string);
             if (key == null) {
@@ -30,7 +30,7 @@ public class PotionEffectTypeProvider implements TypeProvider<PotionEffectType> 
 
     @Nullable
     @Override
-    public Object save(@NotNull SaveContext<PotionEffectType> context) {
+    public Object save(@NonNull SaveContext<PotionEffectType> context) {
         return context.getObject().getKey().asString();
     }
 

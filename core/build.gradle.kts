@@ -3,5 +3,7 @@ plugins {
 }
 
 dependencies {
-    api("dev.dejvokep:boosted-yaml:1.3.7")
+    api("dev.dejvokep:boosted-yaml:1.3.7") {
+        exclude(group = "org.jetbrains.annotations")
+    }
 }

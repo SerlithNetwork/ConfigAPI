@@ -4,14 +4,14 @@ import net.j4c0b3y.api.config.platform.paper.types.WorldReference;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class WorldProvider implements TypeProvider<WorldReference> {
 
-    @NotNull
+    @NonNull
     @Override
-    public WorldReference load(@NotNull LoadContext context) {
+    public WorldReference load(@NonNull LoadContext context) {
         if (context.getObject() instanceof String) {
             return new WorldReference((String) context.getObject());
         }
@@ -20,7 +20,7 @@ public class WorldProvider implements TypeProvider<WorldReference> {
 
     @Nullable
     @Override
-    public Object save(@NotNull SaveContext<WorldReference> context) {
+    public Object save(@NonNull SaveContext<WorldReference> context) {
         return context.getObject().getName();
     }
 

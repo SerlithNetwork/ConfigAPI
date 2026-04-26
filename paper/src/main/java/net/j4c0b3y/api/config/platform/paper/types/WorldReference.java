@@ -3,7 +3,7 @@ package net.j4c0b3y.api.config.platform.paper.types;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 

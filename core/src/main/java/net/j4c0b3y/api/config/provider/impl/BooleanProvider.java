@@ -3,7 +3,7 @@ package net.j4c0b3y.api.config.provider.impl;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +27,7 @@ public class BooleanProvider implements TypeProvider<Boolean> {
     private final static List<String> FALSE_VALUES = Arrays.asList("false", "no", "0");
 
     @Override
-    public @NotNull Boolean load(@NotNull LoadContext context) {
+    public @NonNull Boolean load(@NonNull LoadContext context) {
         String lowered = String.valueOf(context.getObject()).toLowerCase();
 
         // Return true if the lowered string is a true value.
@@ -49,7 +49,7 @@ public class BooleanProvider implements TypeProvider<Boolean> {
     }
 
     @Override
-    public @NotNull Object save(@NotNull SaveContext<Boolean> context) {
+    public @NonNull Object save(@NonNull SaveContext<Boolean> context) {
         return context.getObject();
     }
 }

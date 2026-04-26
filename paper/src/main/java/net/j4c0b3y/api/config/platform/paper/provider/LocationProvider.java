@@ -6,16 +6,16 @@ import net.j4c0b3y.api.config.provider.context.SaveContext;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class LocationProvider implements TypeProvider<Location> {
 
-    @NotNull
+    @NonNull
     @Override
-    public Location load(@NotNull LoadContext context) {
+    public Location load(@NonNull LoadContext context) {
         if (context.getObject() instanceof Map<?,?> map) {
             World world = null;
             if (map.containsKey("world")) {
@@ -29,9 +29,9 @@ public class LocationProvider implements TypeProvider<Location> {
         throw new IllegalStateException("Failed to parse Location, provided: " + context.getObject().getClass().getName());
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public Object save(@NotNull SaveContext<Location> context) {
+    public Object save(@NonNull SaveContext<Location> context) {
         Map<String, Object> map = new LinkedHashMap<>();
         Location location = context.getObject();
         World world = location.getWorld();

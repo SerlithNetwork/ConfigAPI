@@ -6,7 +6,7 @@ import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
 import net.j4c0b3y.api.config.utils.ClassUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class CollectionProvider<E, T extends Collection<E>> implements TypeProvi
     }
 
     @Override
-    public @NotNull T load(@NotNull LoadContext context) {
+    public @NonNull T load(@NonNull LoadContext context) {
         // Get the provider associated with the generic.
         TypeProvider<E> provider = handler.provide(generic);
 
@@ -83,7 +83,7 @@ public class CollectionProvider<E, T extends Collection<E>> implements TypeProvi
     }
 
     @Override
-    public @NotNull Object save(@NotNull SaveContext<T> context) {
+    public @NonNull Object save(@NonNull SaveContext<T> context) {
         // Get the provider associated with the generic.
         TypeProvider<E> provider = handler.provide(generic);
 

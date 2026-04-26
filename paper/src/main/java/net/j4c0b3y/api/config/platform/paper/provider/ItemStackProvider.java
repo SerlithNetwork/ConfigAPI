@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.Map;
@@ -24,10 +24,10 @@ import java.util.Map;
 @SuppressWarnings({"deprecation", "removal"})
 public class ItemStackProvider implements TypeProvider<ItemStack> {
 
-    @NotNull
+    @NonNull
     @Override
     @SuppressWarnings("unchecked")
-    public ItemStack load(@NotNull LoadContext context) {
+    public ItemStack load(@NonNull LoadContext context) {
         if (context.getObject() instanceof Map<?,?> configMap) {
             if (configMap.containsKey("schema_version")) {
                 return Bukkit.getUnsafe().deserializeStack((Map<String, Object>) configMap);
@@ -109,7 +109,7 @@ public class ItemStackProvider implements TypeProvider<ItemStack> {
 
     @Nullable
     @Override
-    public Object save(@NotNull SaveContext<ItemStack> context) {
+    public Object save(@NonNull SaveContext<ItemStack> context) {
         return Bukkit.getUnsafe().serializeStack(context.getObject());
     }
 

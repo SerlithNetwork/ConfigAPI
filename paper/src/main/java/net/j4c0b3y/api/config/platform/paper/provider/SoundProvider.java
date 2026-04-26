@@ -6,14 +6,14 @@ import net.j4c0b3y.api.config.provider.context.SaveContext;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class SoundProvider implements TypeProvider<Sound> {
 
-    @NotNull
+    @NonNull
     @Override
-    public Sound load(@NotNull LoadContext context) {
+    public Sound load(@NonNull LoadContext context) {
         if (context.getObject() instanceof String string) {
             NamespacedKey key = NamespacedKey.fromString(string);
             if (key == null) {
@@ -30,7 +30,7 @@ public class SoundProvider implements TypeProvider<Sound> {
 
     @Nullable
     @Override
-    public Object save(@NotNull SaveContext<Sound> context) {
+    public Object save(@NonNull SaveContext<Sound> context) {
         NamespacedKey key = Registry.SOUNDS.getKey(context.getObject());
         if (key == null) {
             return null;

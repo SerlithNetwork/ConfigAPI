@@ -4,7 +4,7 @@ import net.j4c0b3y.api.config.message.Message;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.List;
 public class MessageProvider implements TypeProvider<Message> {
 
     @Override
-    public @NotNull Message load(@NotNull LoadContext context) {
+    public @NonNull Message load(@NonNull LoadContext context) {
         // If the object is a collection.
         if (context.getObject() instanceof Collection) {
             List<String> parsed = new ArrayList<>();
@@ -40,7 +40,7 @@ public class MessageProvider implements TypeProvider<Message> {
     }
 
     @Override
-    public @NotNull Object save(@NotNull SaveContext<Message> context) {
+    public @NonNull Object save(@NonNull SaveContext<Message> context) {
         Message message = context.getObject();
 
         // If the message is one line, return the first line as a string.

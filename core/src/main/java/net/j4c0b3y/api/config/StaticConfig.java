@@ -11,8 +11,8 @@ import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
 import net.j4c0b3y.api.config.utils.ClassUtils;
 import net.j4c0b3y.api.config.utils.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +86,7 @@ public abstract class StaticConfig {
      * @param defaults The optional default resource to be loaded from.
      * @param handler The config handler to use for config settings.
      */
-    public StaticConfig(@NotNull File file, @Nullable InputStream defaults, @NotNull ConfigHandler handler) {
+    public StaticConfig(@NonNull File file, @Nullable InputStream defaults, @NonNull ConfigHandler handler) {
         this.file = file;
         this.handler = handler;
 
@@ -106,7 +106,7 @@ public abstract class StaticConfig {
      * @param handler The config handler to use for config settings.
      */
     @SuppressWarnings("unused")
-    public StaticConfig(@NotNull File file, @NotNull ConfigHandler handler) {
+    public StaticConfig(@NonNull File file, @NonNull ConfigHandler handler) {
         this(file, null, handler);
     }
 
@@ -117,7 +117,7 @@ public abstract class StaticConfig {
      * @param defaults The optional default resource to be loaded from.
      * @param handler The config handler to use for config settings.
      */
-    public StaticConfig(@NotNull Path path, @Nullable InputStream defaults, @NotNull ConfigHandler handler) {
+    public StaticConfig(@NonNull Path path, @Nullable InputStream defaults, @NonNull ConfigHandler handler) {
         this(path.toFile(), defaults, handler);
     }
 
@@ -128,7 +128,7 @@ public abstract class StaticConfig {
      * @param handler The config handler to use for config settings.
      */
     @SuppressWarnings("unused")
-    public StaticConfig(@NotNull Path path, @NotNull ConfigHandler handler) {
+    public StaticConfig(@NonNull Path path, @NonNull ConfigHandler handler) {
         this(path.toFile(), null, handler);
     }
 

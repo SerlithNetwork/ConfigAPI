@@ -10,7 +10,7 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.j4c0b3y.api.config.utils.PathUtils;
 import net.j4c0b3y.api.config.utils.StringUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +66,7 @@ public class ConfigDocument extends YamlDocument {
      * @return The dumped yaml document.
      */
     @Override
-    public String dump(@NotNull DumperSettings settings) {
+    public String dump(@NonNull DumperSettings settings) {
         String dump = super.dump(settings);
         String content = handler.isFormatStructure() ? format(dump) : dump;
 

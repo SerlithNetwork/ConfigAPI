@@ -2,8 +2,8 @@ package net.j4c0b3y.api.config.provider;
 
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Used for (de)serialization between the document and static fields.
@@ -19,7 +19,7 @@ public interface TypeProvider<T> {
      * @param context The load context, containing the object.
      * @return The deserialized type provider generic instance.
      */
-    @NotNull T load(@NotNull LoadContext context);
+    @NonNull T load(@NonNull LoadContext context);
 
     /**
      * Serializes the type provider's generic class instance to a yaml object.
@@ -27,5 +27,5 @@ public interface TypeProvider<T> {
      * @param context The generic save context, containing the instance.
      * @return The serialized yaml object.
      */
-    @Nullable Object save(@NotNull SaveContext<T> context);
+    @Nullable Object save(@NonNull SaveContext<T> context);
 }

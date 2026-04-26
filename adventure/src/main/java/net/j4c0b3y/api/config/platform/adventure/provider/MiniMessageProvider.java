@@ -4,14 +4,14 @@ import net.j4c0b3y.api.config.platform.adventure.types.MiniComponent;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class MiniMessageProvider implements TypeProvider<MiniComponent> {
 
-    @NotNull
+    @NonNull
     @Override
-    public MiniComponent load(@NotNull LoadContext context) {
+    public MiniComponent load(@NonNull LoadContext context) {
         if (context.getObject() instanceof String string) {
             return new MiniComponent(string);
         }
@@ -20,7 +20,7 @@ public class MiniMessageProvider implements TypeProvider<MiniComponent> {
 
     @Nullable
     @Override
-    public Object save(@NotNull SaveContext<MiniComponent> context) {
+    public Object save(@NonNull SaveContext<MiniComponent> context) {
         return context.getObject().getRaw();
     }
 

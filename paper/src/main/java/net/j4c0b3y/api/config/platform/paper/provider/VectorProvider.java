@@ -4,16 +4,16 @@ import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class VectorProvider implements TypeProvider<Vector> {
-    @NotNull
+    @NonNull
     @Override
-    public Vector load(@NotNull LoadContext context) {
+    public Vector load(@NonNull LoadContext context) {
         if (context.getObject() instanceof Map<?, ?> map) {
             double x = 0.0;
             double y = 0.0;
@@ -36,7 +36,7 @@ public class VectorProvider implements TypeProvider<Vector> {
 
     @Nullable
     @Override
-    public Object save(@NotNull SaveContext<Vector> context) {
+    public Object save(@NonNull SaveContext<Vector> context) {
         Map<String, Object> map = new LinkedHashMap<>();
 
         map.put("x", context.getObject().getX());

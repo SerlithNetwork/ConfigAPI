@@ -6,8 +6,8 @@ plugins {
     java
     `maven-publish`
     `java-library`
-    id("io.freefair.lombok") version "8.12.1"
-    id("com.gradleup.shadow") version "9.0.0-beta8"
+    id("io.freefair.lombok") version "9.4.0"
+    id("com.gradleup.shadow") version "9.3.0"
 }
 
 object Project {
@@ -23,12 +23,17 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "java-library")
-    apply(plugin = "io.freefair.lombok")
-    apply(plugin = "maven-publish")
-    apply(plugin = "com.gradleup.shadow")
+    apply {
+        plugin("java")
+        plugin("java-library")
+        plugin("io.freefair.lombok")
+        plugin("maven-publish")
+        plugin("com.gradleup.shadow")
+    }
 
+    dependencies {
+        compileOnly("org.jspecify:jspecify:1.0.0")
+    }
 
     if (project.name == "paper") {
         java {

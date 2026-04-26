@@ -7,8 +7,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,9 +16,9 @@ import java.util.Objects;
 
 public class PotionEffectProvider implements TypeProvider<PotionEffect> {
 
-    @NotNull
+    @NonNull
     @Override
-    public PotionEffect load(@NotNull LoadContext context) {
+    public PotionEffect load(@NonNull LoadContext context) {
         if (context.getObject() instanceof Map<?,?> map) {
             String key = (String) map.get("effect");
             PotionEffectType effect = Registry.MOB_EFFECT.get(Objects.requireNonNull(NamespacedKey.fromString(key)));
@@ -39,7 +39,7 @@ public class PotionEffectProvider implements TypeProvider<PotionEffect> {
 
     @Nullable
     @Override
-    public Object save(@NotNull SaveContext<PotionEffect> context) {
+    public Object save(@NonNull SaveContext<PotionEffect> context) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("effect", context.getObject().getType().getKey().asString());
         map.put("duration", context.getObject().getDuration());

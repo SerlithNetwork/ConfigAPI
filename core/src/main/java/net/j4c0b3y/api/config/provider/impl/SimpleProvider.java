@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
 import net.j4c0b3y.api.config.provider.context.SaveContext;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
 
@@ -30,12 +30,12 @@ public class SimpleProvider<T> implements TypeProvider<T> {
     private Function<T, String> saver = Object::toString;
 
     @Override
-    public @NotNull T load(@NotNull LoadContext context) {
+    public @NonNull T load(@NonNull LoadContext context) {
         return parser.apply(String.valueOf(context.getObject()));
     }
 
     @Override
-    public @NotNull Object save(@NotNull SaveContext<T> context) {
+    public @NonNull Object save(@NonNull SaveContext<T> context) {
         return saver.apply(context.getObject());
     }
 }
