@@ -4,8 +4,12 @@ import lombok.Getter;
 import net.j4c0b3y.api.config.ConfigHandler;
 import net.j4c0b3y.api.config.platform.adventure.provider.MiniMessageProvider;
 import net.j4c0b3y.api.config.platform.adventure.provider.PrefixedComponentProvider;
+import net.j4c0b3y.api.config.platform.adventure.provider.TitleComponentProvider;
+import net.j4c0b3y.api.config.platform.adventure.provider.TitleTimesProvider;
 import net.j4c0b3y.api.config.platform.adventure.types.MiniComponent;
 import net.j4c0b3y.api.config.platform.adventure.types.PrefixedComponent;
+import net.j4c0b3y.api.config.platform.adventure.types.TitleComponent;
+import net.j4c0b3y.api.config.platform.adventure.types.TitleTimes;
 import net.kyori.adventure.text.Component;
 
 import java.util.logging.Logger;
@@ -36,6 +40,8 @@ public class AdventureConfigHandler extends ConfigHandler {
         AdventureConfigHandler.prefix = prefix;
         this.bind(MiniComponent.class, new MiniMessageProvider());
         this.bind(PrefixedComponent.class, new PrefixedComponentProvider());
+        this.bind(TitleTimes.class, new TitleTimesProvider());
+        this.bind(TitleComponent.class, new TitleComponentProvider());
     }
 
     /**
