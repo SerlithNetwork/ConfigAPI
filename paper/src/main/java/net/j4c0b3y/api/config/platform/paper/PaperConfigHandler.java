@@ -5,6 +5,7 @@ import net.j4c0b3y.api.config.platform.paper.provider.*;
 import net.j4c0b3y.api.config.platform.paper.types.WorldReference;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -40,6 +41,7 @@ public class PaperConfigHandler extends AdventureConfigHandler {
         this.bind(Sound.class, new SoundProvider());
         this.bind(Vector.class, new VectorProvider());
         this.bind(WorldReference.class, new WorldProvider());
+        this.bind(NamespacedKey.class, new NamespacedKeyProvider());
     }
 
     /**
