@@ -21,7 +21,7 @@ public class TitleTimesProvider implements TypeProvider<TitleTimes> {
                     (long) map.get("fade-out")
             );
         }
-        throw new IllegalStateException("Failed to parse Title times");
+        throw new IllegalStateException("Failed to parse Title times: " + context.getObject().getClass().getName());
     }
 
     @Override

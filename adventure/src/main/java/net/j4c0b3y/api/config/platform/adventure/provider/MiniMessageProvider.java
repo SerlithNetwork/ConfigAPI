@@ -15,7 +15,7 @@ public class MiniMessageProvider implements TypeProvider<MiniComponent> {
         if (context.getObject() instanceof String string) {
             return new MiniComponent(string);
         }
-        throw new IllegalStateException("Failed to parse MiniMessage");
+        throw new IllegalStateException("Failed to parse MiniMessage: " + context.getObject().getClass().getName());
     }
 
     @Nullable

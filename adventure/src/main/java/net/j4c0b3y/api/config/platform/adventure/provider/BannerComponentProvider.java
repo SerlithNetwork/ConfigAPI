@@ -16,7 +16,7 @@ public class BannerComponentProvider implements TypeProvider<BannerComponent> {
         if (context.getObject() instanceof Collection<?> collection) {
             return new BannerComponent(collection.stream().map(Object::toString).toArray(String[]::new));
         }
-        throw new IllegalStateException("Failed to parse MiniMessage");
+        throw new IllegalStateException("Failed to parse Banner: " + context.getObject().getClass().getName());
     }
 
     @Override

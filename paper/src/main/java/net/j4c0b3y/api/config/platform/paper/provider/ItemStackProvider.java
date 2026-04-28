@@ -1,5 +1,6 @@
 package net.j4c0b3y.api.config.platform.paper.provider;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import io.papermc.paper.registry.RegistryKey;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
@@ -28,7 +29,8 @@ public class ItemStackProvider implements TypeProvider<ItemStack> {
     @Override
     @SuppressWarnings("unchecked")
     public ItemStack load(@NonNull LoadContext context) {
-        if (context.getObject() instanceof Map<?,?> configMap) {
+        if (context.getObject() instanceof Section section) {
+            Map<String, Object> configMap = section.getStringRouteMappedValues(true);
             if (configMap.containsKey("schema_version")) {
                 return Bukkit.getUnsafe().deserializeStack((Map<String, Object>) configMap);
             }

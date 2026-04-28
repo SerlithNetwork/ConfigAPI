@@ -1,5 +1,6 @@
 package net.j4c0b3y.api.config.platform.adventure.provider;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.j4c0b3y.api.config.platform.adventure.types.TitleComponent;
 import net.j4c0b3y.api.config.provider.TypeProvider;
 import net.j4c0b3y.api.config.provider.context.LoadContext;
@@ -14,17 +15,17 @@ public class TitleComponentProvider implements TypeProvider<TitleComponent> {
 
     @Override
     public @NonNull TitleComponent load(@NonNull LoadContext context) {
-        if (context.getObject() instanceof Map<?,?> map) {
-            Map<?, ?> duration = (Map<?, ?>) map.get("duration");
+        if (context.getObject() instanceof Section section) {
+            Section duration = (Section) section.get("duration");
             return new TitleComponent(
-                    (String) map.get("title"),
-                    (String) map.get("subtitle"),
-                    (long) duration.get("fade-in"),
-                    (long) duration.get("stay"),
-                    (long) duration.get("fade-out")
+                    (String) section.get("title"),
+                    (String) section.get("subtitle"),
+                    (int) duration.get("fade-in"),
+                    (int) duration.get("stay"),
+                    (int) duration.get("fade-out")
             );
         }
-        throw new IllegalStateException("Failed to parse Title component");
+        throw new IllegalStateException("Failed to parse Title component: " + context.getObject().getClass().getName());
     }
 
     @Override

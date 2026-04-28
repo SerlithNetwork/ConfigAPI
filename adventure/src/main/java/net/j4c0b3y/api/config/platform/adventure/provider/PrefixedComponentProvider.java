@@ -14,7 +14,7 @@ public class PrefixedComponentProvider implements TypeProvider<PrefixedComponent
         if (context.getObject() instanceof String string) {
             return new PrefixedComponent(string);
         }
-        throw new IllegalStateException("Failed to parse prefixed component");
+        throw new IllegalStateException("Failed to parse prefixed component: " + context.getObject().getClass().getName());
     }
 
     @NonNull
